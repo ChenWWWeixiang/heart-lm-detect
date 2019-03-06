@@ -83,17 +83,17 @@ class DataLoader(object):
         fixed = ImageRecord()
         fixed.name = self.T1_list[idx]
         fixed.data = image_np
-        fixed.shape = np.array(image_sitk.GetSize())
+        fixed.shape = np.array(image_np.shape)
         fixed.origin = np.array(image_sitk.GetOrigin())
         fixed.spacing = np.array(image_sitk.GetSpacing())
 
-        name=self.T1_list[idx].split('/')[-1].split('.')[0]
-        T2_list=glob(self._base_folder+'/resampleT2/*to'+name+'.mha')
+        name=self.T1_list[idx].split('/')[-1].split('.mha')[0]
+        T2_list=glob(self._base_folder+'/T2/*to'+name+'*.mha')
         ii=random.randint(0,len(T2_list)-1)
         image_sitk = sitk.ReadImage(T2_list[ii], sitk.sitkFloat32)
         image_np_T2 = sitk.GetArrayFromImage(image_sitk)
-        xx,yy,zz=np.where(image_np_T2==0)
-        image_np_T2=image_np_T2[:,:,min(zz):max(zz)]#find the real volume area
+        zz=np.where(np.sum(np.sum(image_np_T2,1),1)>0)
+        image_np_T2=image_np_T2[np.min(zz):np.max(zz),:,:]#find the real volume area
         image_np = image_np_T2.swapaxes(0, 2)
         image_np = (image_np - image_np.mean()) / image_np.std()
         image_np = np.clip(image_np, -10, 10)
@@ -101,7 +101,7 @@ class DataLoader(object):
         moving = ImageRecord()
         moving.name = T2_list[ii]
         moving.data = image_np
-        moving.shape = np.array(image_sitk.GetSize())
+        moving.shape = np.array(image_np.shape)
         moving.origin = np.array(image_sitk.GetOrigin())
         moving.spacing = np.array(image_sitk.GetSpacing())
 

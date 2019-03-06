@@ -6,7 +6,7 @@
 import numpy as np
 import gym
 from skimage.transform import resize
-
+from sklearn import metrics as mr
 from gym import spaces
 from collections import Counter, deque, namedtuple
 
@@ -131,29 +131,45 @@ class MedEnv(gym.Env):
         self._shape_image_fixed = self.fixed.shape
         self._shape_image_moving = self.moving.shape
         ##start from a radom location
-        self.location=np.array([np.random.randint(self._shape_obser[i]//2,self._shape_image_fixed[i]-self._shape_obser[i]/2,1) for i in range(3)])
+        self.location=np.transpose(np.array([np.random.randint(self._shape_obser[i]//2,self._shape_image_fixed[i]-self._shape_obser[i]/2,1)
+                                for i in range(3)]),[1,0])[0]
         # self.location = np.array(self._ctl.start_point)
         #self.location = np.array([np.random.randint(x - 15, x + 15, dtype = "int") for x in self.moving.end_point])
         self.state = self._get_state_current()
 
-        self._dist_current = self._calc_mutualInformation(self.location, self.fixed, self.moving)##TODO:Metric function should be chaged
+        self._dist_current = self._calc_mutualInformation(self.location)##TODO:Metric function should be chaged
 
         return self.state
-    def _calc_mutualInformation(self,location,fixed,moving):##TODO: MI has been no defined
+    def _calc_mutualInformation(self,loc):##TODO: MI and area points. Maybe weighted?
+        half_size_l = np.array(self._shape_image_moving, dtype="int") // 2
+        half_size_r = np.array(self._shape_image_moving, dtype="int") - half_size_l
 
-        return 1
+        bbox_l_tmp = loc - half_size_l
+        bbox_r_tmp = loc + half_size_r
+
+        # check if they violate image boundary and fix them
+        bbox_l = np.max((bbox_l_tmp, np.array([0, 0, 0])), axis=0)
+        bbox_r = np.min((bbox_r_tmp, np.array(self._shape_image_fixed)), axis=0)
+        area=bbox_r-bbox_l
+        area=area[0]*area[1]*area[2]/(self._shape_image_moving[0]*self._shape_image_moving[1]*self._shape_image_moving[2])
+        state_fixed=self.fixed.data[bbox_l[0]:bbox_r[0], bbox_l[1]:bbox_r[1], bbox_l[2]:bbox_r[2]]
+        moving_l = np.max([bbox_l - loc+self._shape_image_moving//2, np.array([0, 0, 0])], axis=0)
+        moving_r = np.max([bbox_r - loc+self._shape_image_moving//2, self._shape_image_moving//2- loc+self._shape_image_fixed], axis=0)
+        state_moving = self.moving.data[moving_l[0]:moving_r[0], moving_l[1]:moving_r[1], moving_l[2]:moving_r[2]]
+        MI=mr.normalized_mutual_info_score(np.reshape(state_fixed,[-1]),np.reshape(state_moving,[-1]))
+
+        return MI+area
     def _calc_reward(self, curr_location, next_location):
         """ calculate the reward based on the decrease in MI to the end point
         Arguments:
             curr_location {[type]} -- [description]
             next_location {[type]} -- [description]
         """
-        MI_curr = self._calc_mutualInformation(curr_location, self.fixed, self.moving)
-        MI_next = self._calc_mutualInformation(next_location, self.fixed, self.moving)
+        MI_curr = self._calc_mutualInformation(curr_location)
+        MI_next = self._calc_mutualInformation(next_location)
 
         return MI_curr - MI_next
-
-    def _get_state_current(self):##TODO: need to be test
+    def _get_state_current(self):
         """ crop image data around current location to obtain what network sees
         """
         # initialization
@@ -168,8 +184,8 @@ class MedEnv(gym.Env):
         bbox_l = np.max((bbox_l_tmp, np.array([0, 0, 0])), axis=0)
         bbox_r = np.min((bbox_r_tmp, np.array(self._shape_image_fixed)), axis=0)
         state_fixed=self.fixed.data[bbox_l[0]:bbox_r[0], bbox_l[1]:bbox_r[1], bbox_l[2]:bbox_r[2]]
-        moving_l = np.max([bbox_l - self.location, np.array([0, 0, 0])], axis=0)
-        moving_r = np.max([bbox_r - self.location, self._shape_image_fixed- self.location], axis=0)
+        moving_l = np.max([bbox_l - self.location+self._shape_image_moving//2, np.array([0, 0, 0])], axis=0)
+        moving_r = np.max([bbox_r - self.location+self._shape_image_moving//2, self._shape_image_moving//2- self.location+self._shape_image_fixed], axis=0)
         state_moving = self.moving.data[moving_l[0]:moving_r[0], moving_l[1]:moving_r[1], moving_l[2]:moving_r[2]]
         state_moving=resize(state_moving,(self._shape_obser[0],self._shape_obser[1],self._shape_obser[2]),order=3,
                             mode='constant',cval=0,clip=True,preserve_range=True)
@@ -226,7 +242,7 @@ class MedEnv(gym.Env):
 # ================================ ObserStack =================================
 # =============================================================================
 
-class ObserStack(gym.Wrapper):
+class ObserStack(gym.Wrapper):##TODO:What is it?
     """ used when not training, wrapper for MedEnv """
     def __init__(self, env, num_obsers):
         super(ObserStack, self).__init__(env)

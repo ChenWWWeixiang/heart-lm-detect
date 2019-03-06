@@ -146,7 +146,7 @@ class CtlDQN(MedAgent):
             print("[!] Load SUCCESS!")
         else:
             self._actor.initialization()
-            print("[!] Load FAIELD! Train from scratch!")
+            print("[!] Load FAILD! Train from scratch!")
         # print training configuration
         print("[*] Training configuration list.")
         for key, value in self._args.items():

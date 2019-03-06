@@ -23,7 +23,7 @@ class DQNModel(nn.Module):
         """ build network
         """
         self._base_conv = nn.Sequential(
-            nn.Conv3d(in_channels=self._num_obsers, out_channels=32, kernel_size=4, stride=2, padding=1),
+            nn.Conv3d(in_channels=self._num_obsers*2, out_channels=32, kernel_size=4, stride=2, padding=1),# 2 channels input
             # nn.MaxPool3d(kernel_size=2),
             nn.BatchNorm3d(num_features=32),
             nn.LeakyReLU(),

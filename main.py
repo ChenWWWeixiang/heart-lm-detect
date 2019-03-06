@@ -3,12 +3,6 @@
 # File: main.py
 # Author: Yongjie Duan <dyj17@mails.tsinghua.edu.cn>
 
-# def warn(*arg, **kwargs):
-#     pass
-
-# import warnings
-# warnings.warn = warn
-# warnings.simplefilter("ignore", category=PendingDeprecationWarning)
 
 import os
 import sys

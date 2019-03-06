@@ -93,7 +93,7 @@ class MedEnv(gym.Env):
         # terminate if the agent reached the last point
         if self._phase == "train" and self._dist_current <= 0.5:
             self._isOver = True
-        
+
         # terminate if maximum number of steps is reached
         self._cnt += 1
         if self._cnt >= self._max_num_steps:
@@ -107,7 +107,7 @@ class MedEnv(gym.Env):
             self._isOver = True
             self.location = self._get_location_best()
             self.state = self._get_state_current()
-        
+
         # update distance between current location and target point
         if self._phase == "play":
             self._dist_current = 0
@@ -117,7 +117,7 @@ class MedEnv(gym.Env):
         return self.state, reward, self._isOver, Info(self._dist_current, self._cnt)
 
     def reset(self):
-        """ reset state and anything related        
+        """ reset state and anything related
         Returns:
             [type] -- [description]
         """
@@ -136,20 +136,22 @@ class MedEnv(gym.Env):
         #self.location = np.array([np.random.randint(x - 15, x + 15, dtype = "int") for x in self.moving.end_point])
         self.state = self._get_state_current()
 
-        self._dist_current = self._calc_distance(self.location, self.fixed, self.moving)##TODO:Metric function should be chaged
+        self._dist_current = self._calc_mutualInformation(self.location, self.fixed, self.moving)##TODO:Metric function should be chaged
 
         return self.state
+    def _calc_mutualInformation(self,location,fixed,moving):##TODO: MI has been no defined
 
+        return 1
     def _calc_reward(self, curr_location, next_location):
-        """ calculate the reward based on the decrease in euclidean distance to the end point        
+        """ calculate the reward based on the decrease in MI to the end point
         Arguments:
             curr_location {[type]} -- [description]
             next_location {[type]} -- [description]
         """
-        dist_curr = self._calc_distance(curr_location, self._ctl.end_point, self._image.spacing)
-        dist_next = self._calc_distance(next_location, self._ctl.end_point, self._image.spacing)
+        MI_curr = self._calc_mutualInformation(curr_location, self.fixed, self.moving)
+        MI_next = self._calc_mutualInformation(next_location, self.fixed, self.moving)
 
-        return dist_curr - dist_next
+        return MI_curr - MI_next
 
     def _get_state_current(self):##TODO: need to be test
         """ crop image data around current location to obtain what network sees

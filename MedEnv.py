@@ -42,6 +42,8 @@ class MedEnv(gym.Env):
         self._num_actions = num_actions
         # counter to limit number of steps per image
         self._cnt = 0
+        #initial angle
+        self.angle=0
         # 3D or ...
         self._ndims = 2*len(self._shape_obser)
         # history buffer for storing last locations to check oscilations
@@ -73,8 +75,9 @@ class MedEnv(gym.Env):
         self._isOver = False
 
         curr_location = self.location
+        curr_angle=self.angle
 
-        next_location = curr_location + self._action_trans[action]
+        [next_location,next_angle] = [curr_location,curr_angle] + self._action_trans[action]
         if np.any(next_location < np.array([0, 0, 0])) or np.any(next_location >= np.array(self.fixed.shape)):
             next_location = curr_location
             go_out = True
@@ -84,14 +87,16 @@ class MedEnv(gym.Env):
         if go_out:
             reward = -1
         else:
-            reward = np.clip(self._calc_reward(curr_location, next_location), -1, 1)
+            reward = np.clip(self._calc_reward(curr_location, next_location,curr_angle,next_angle), -1, 1)
 
         # update
         self.location = next_location
+        self.angle=next_angle
         self.state = self._get_state_current()
+        self._dist_current = self._calc_mutualInformation(self.location)
 
         # terminate if the agent reached the last point
-        if self._phase == "train" and self._dist_current <= 0.5:
+        if self._phase == "train" and self._dist_current <= 0.5:##TODO: maybe the parameter 0.5 need to be changed
             self._isOver = True
 
         # terminate if maximum number of steps is reached
@@ -106,11 +111,12 @@ class MedEnv(gym.Env):
         if self._phase != "train" and self._oscillate:
             self._isOver = True
             self.location = self._get_location_best()
+            self.angle=self._get_get_angle_best()
             self.state = self._get_state_current()
 
         # update distance between fixed and moving
 
-        self._dist_current = self._calc_mutualInformation(self.location)
+
 
         return self.state, reward, self._isOver, Info(self._dist_current, self._cnt)
 
@@ -139,7 +145,7 @@ class MedEnv(gym.Env):
         self._dist_current = self._calc_mutualInformation(self.location,self.angle)
 
         return self.state
-    def _calc_mutualInformation(self,loc,ang):##TODO: MI and area points. Maybe weighted?
+    def _calc_mutualInformation(self,loc,ang):##TODO: ang has no been used
         half_size_l = np.array(self._shape_image_moving, dtype="int") // 2
         half_size_r = np.array(self._shape_image_moving, dtype="int") - half_size_l
 
@@ -168,10 +174,12 @@ class MedEnv(gym.Env):
         MI_next = self._calc_mutualInformation(next_location,next_ang)
 
         return MI_curr - MI_next
-    def _get_state_current(self):
+    def _get_state_current(self):##TODO: ang has no been used
         """ crop image data around current location to obtain what network sees
         """
         # initialization
+
+        current_angle=self.angle##TODO: ang has no been used
 
         half_size_l = np.array(self._shape_image_moving, dtype="int") // 2
         half_size_r = np.array(self._shape_image_moving, dtype="int") - half_size_l
@@ -237,6 +245,16 @@ class MedEnv(gym.Env):
 
         return best_location
 
+    def _get_angle_best(self):
+        """ get the best location with the best Q value from locations stored in history
+        """
+        last_qvalue_history = self._qvalue_history[-4:]
+        last_loc_history = self._loc_history[-4:]
+        best_qvalue = np.max(last_qvalue_history, axis=1)
+        best_idx = best_qvalue.argmin()
+        best_location = last_loc_history[best_idx]
+
+        return best_location
 # =============================================================================
 # ================================ ObserStack =================================
 # =============================================================================

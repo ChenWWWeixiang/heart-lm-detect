@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="66147880-ffb4-435d-86c9-f4ef616d1229" name="Default" comment="reset and load has passed test">
-      <change beforePath="$PROJECT_DIR$/DataLoader.py" beforeDir="false" afterPath="$PROJECT_DIR$/DataLoader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MedEnv.py" beforeDir="false" afterPath="$PROJECT_DIR$/MedEnv.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -40,7 +40,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/MedAgent.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="326">
@@ -53,14 +53,13 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/MedEnv.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1881">
-              <caret line="62" column="12" selection-start-line="62" selection-start-column="8" selection-end-line="62" selection-end-column="12" />
+            <state relative-caret-position="164">
+              <caret line="233" column="28" selection-start-line="233" selection-start-column="28" selection-end-line="233" selection-end-column="28" />
               <folding>
                 <element signature="e#118#136#0" expanded="true" />
-                <element signature="e#7295#7628#0" />
               </folding>
             </state>
           </provider>
@@ -91,7 +90,6 @@
       <find>_get_state_current</find>
       <find>_action_trans</find>
       <find>action</find>
-      <find>_get_location_best</find>
       <find>_loc_history</find>
       <find>self._loc_history</find>
       <find>self._qvalue</find>
@@ -100,6 +98,7 @@
       <find>shape_ob</find>
       <find>_indexs</find>
       <find>location</find>
+      <find>_get_location_best</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -118,8 +117,8 @@
         <option value="$PROJECT_DIR$/DQNModel.py" />
         <option value="$PROJECT_DIR$/CtlDQN.py" />
         <option value="$PROJECT_DIR$/DataLoader.py" />
-        <option value="$PROJECT_DIR$/MedEnv.py" />
         <option value="$PROJECT_DIR$/MedAgent.py" />
+        <option value="$PROJECT_DIR$/MedEnv.py" />
       </list>
     </option>
   </component>
@@ -216,7 +215,7 @@
       <updated>1551671211444</updated>
       <workItem from="1551699037636" duration="15266000" />
       <workItem from="1551793662208" duration="1759000" />
-      <workItem from="1551801119291" duration="25589000" />
+      <workItem from="1551801119291" duration="28362000" />
     </task>
     <task id="LOCAL-00001" summary="fist try">
       <created>1551849226777</created>
@@ -236,7 +235,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="42614000" />
+    <option name="totallyTimeSpent" value="45387000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -257,7 +256,7 @@
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.061590146" />
       <window_info anchor="bottom" id="Run" order="2" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.36949152" />
+      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.15028249" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.03276836" />
@@ -287,7 +286,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/MedEnv.py</url>
-          <line>76</line>
+          <line>79</line>
           <option name="timeStamp" value="37" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -457,17 +456,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MedEnv.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1881">
-          <caret line="62" column="12" selection-start-line="62" selection-start-column="8" selection-end-line="62" selection-end-column="12" />
-          <folding>
-            <element signature="e#118#136#0" expanded="true" />
-            <element signature="e#7295#7628#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/MedAgent.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="326">
@@ -475,6 +463,16 @@
           <folding>
             <element signature="e#120#138#0" expanded="true" />
             <element signature="e#430#573#1" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MedEnv.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="164">
+          <caret line="233" column="28" selection-start-line="233" selection-start-column="28" selection-end-line="233" selection-end-column="28" />
+          <folding>
+            <element signature="e#118#136#0" expanded="true" />
           </folding>
         </state>
       </provider>

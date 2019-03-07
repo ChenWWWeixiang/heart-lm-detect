@@ -16,18 +16,18 @@ from CtlDQN import CtlDQN as DQN
 
 ###############################################################################
 # batch size used in nature paper is 32 - medical is 256
-BATCH_SIZE = 8
+BATCH_SIZE = 32
 # breakout (84,84) - medical 2D (60,60) - medical 3D (26,26,26)
 IMAGE_SIZE = (64,64,32)#(46, 46, 46)
 # how many frames to keep
 # in other words, how many observations the network can see
 NUM_OBSERS = 4
 # action space
-NUM_ACTIONS = 9 #moving x/y/z, size x/y/z, rotate x/y/z
+NUM_ACTIONS = 6# 12 using 9 for debug
 # discount factor - nature (0.99) - medical (0.9)
 REWARD_GAMMA = 0.9
-# replay memory size - nature (1e6) - medical (1e5 view-patches) - medical (1e4 for (152,152,46))
-MAX_MEMORY_SIZE = 1e4
+# replay memory size - nature (1e6) - medical (1e5 view-patches) debug 1e4
+MAX_MEMORY_SIZE = 1e5
 # initialization of memory buffer
 INIT_MEMORY_SIZE = MAX_MEMORY_SIZE // 200  # 500
 # max epochs

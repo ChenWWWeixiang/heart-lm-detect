@@ -93,6 +93,9 @@ class MedAgent(object):
         action_var = to_tensor_var(batch.action, self._use_cuda, dtype="int64")
         reward_var = to_tensor_var(batch.reward, self._use_cuda, dtype="float32")
         isOver_var = to_tensor_var(batch.isOver, self._use_cuda, dtype="float32")
+        state_var=th.Tensor.reshape(state_var,[self._batch_size,2*self._num_obsers,self._shape_obser[0],self._shape_obser[1],self._shape_obser[2]])
+        next_state_var = th.Tensor.reshape(next_state_var, [self._batch_size, 2 * self._num_obsers, self._shape_obser[0],
+                                                  self._shape_obser[1], self._shape_obser[2]])
         # through the DQN & target DQN
         qvalue = self._actor.forward(state_var).gather(1, action_var[:, None])
         next_qvalue = self._target.forward(next_state_var).detach()
@@ -138,13 +141,15 @@ class MedAgent(object):
             self._epsilon = (turn_value_1 - turn_value_0) * (self._cnt_epoch - turn_epoch_0) / (turn_epoch_1 - turn_epoch_0) + turn_value_0
 
     def interact(self):
-        return self._take_one_step()
+        return self._take_n_steps(10)
 
     def _take_one_step(self):
         return self._populate_exp()
         
-    def _take_n_steps(self):
-        pass
+    def _take_n_steps(self,n):
+        for i in range(n):
+            self._take_one_step()
+        return
 
     def _init_memory(self):
         """ quickly fill the memory """

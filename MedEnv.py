@@ -51,6 +51,7 @@ class MedEnv(gym.Env):
         self._reset_history()
         # actions, only translation
         self._action_trans = np.concatenate((np.eye(self._ndims), -1 * np.eye(self._ndims)), axis=0).astype("int")
+        self._action_trans=self._action_trans[np.array([0,1,2,6,7,8]),:]
         #(dx,dy,dz,dangle1,dangle2,dangle3)
         # data loader
         self._data_loader = DataLoader(phase=self._phase, base_folder=self._base_folder)
@@ -138,7 +139,7 @@ class MedEnv(gym.Env):
         ##start from a radom location
         self.location=np.transpose(np.array([np.random.randint(self._shape_obser[i]//2,self._shape_image_fixed[i]-self._shape_obser[i]/2,1)
                                 for i in range(3)]),[1,0])[0]
-        self.angle=np.transpose(np.array([np.random.randint(-5,5,1)for i in range(3)]),[1,0])[0]##TODO:need to add rotate
+        self.angle=np.transpose(np.array([np.random.randint(-5,5,1)for i in range(3)]),[1,0])[0]
         # self.location = np.array(self._ctl.start_point)
         #self.location = np.array([np.random.randint(x - 15, x + 15, dtype = "int") for x in self.moving.end_point])
         self.state = self._get_state_current()#1s

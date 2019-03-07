@@ -11,7 +11,7 @@ import random
 from glob import glob
 import numpy as np
 import SimpleITK as sitk
-
+from skimage.transform import resize
 class ImageRecord(object):
     """ a class to record image """
     pass
@@ -75,6 +75,8 @@ class DataLoader(object):
         """
         image_sitk = sitk.ReadImage(self.T1_list[idx], sitk.sitkFloat32)
         image_np_T1 = sitk.GetArrayFromImage(image_sitk)
+        image_np_T1=resize(image_np_T1,(image_np_T1.shape[0]//2,image_np_T1.shape[1]//2,image_np_T1.shape[2]//2),order=3,
+                            mode='constant',cval=0,clip=True,preserve_range=True)
         image_np = image_np_T1.swapaxes(0, 2)
         image_np = (image_np - image_np.mean()) / image_np.std()
         image_np = np.clip(image_np, -10, 10)
@@ -92,6 +94,8 @@ class DataLoader(object):
         ii=random.randint(0,len(T2_list)-1)
         image_sitk = sitk.ReadImage(T2_list[ii], sitk.sitkFloat32)
         image_np_T2 = sitk.GetArrayFromImage(image_sitk)
+        image_np_T2=resize(image_np_T2,(image_np_T2.shape[0]//2,image_np_T2.shape[1]//2,image_np_T2.shape[2]//2),order=3,
+                            mode='constant',cval=0,clip=True,preserve_range=True)
         zz=np.where(np.sum(np.sum(image_np_T2,1),1)>0)
         image_np_T2=image_np_T2[np.min(zz):np.max(zz),:,:]#find the real volume area
         image_np = image_np_T2.swapaxes(0, 2)

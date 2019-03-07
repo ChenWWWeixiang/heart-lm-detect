@@ -4,7 +4,7 @@
 # Author: Yongjie Duan <dyj17@mails.tsinghua.edu.cn>
 
 import numpy as np
-import gym
+import gym,time
 from skimage.transform import resize
 from sklearn import metrics as mr
 from gym import spaces
@@ -13,7 +13,7 @@ from collections import Counter, deque, namedtuple
 from DataLoader import DataLoader
 
 Info = namedtuple("Info",
-                        ["dist_error", "steps"])
+                        ["dist_score", "steps"])
 
 class MedEnv(gym.Env):
     """ a class represents enviroment
@@ -62,7 +62,7 @@ class MedEnv(gym.Env):
     def get_cnt(self):
         return self._cnt
 
-    def step(self, action, qvalue):
+    def step(self, action, qvalue):#13s
         """ take an action on the current state
         Arguments:
             action {[type]} -- [description]
@@ -77,7 +77,8 @@ class MedEnv(gym.Env):
         curr_location = self.location
         curr_angle=self.angle
 
-        [next_location,next_angle] = [curr_location,curr_angle] + self._action_trans[action]
+        next_location = curr_location + self._action_trans[action][:3]
+        next_angle=curr_angle+self._action_trans[action][3:]
         if np.any(next_location < np.array([0, 0, 0])) or np.any(next_location >= np.array(self.fixed.shape)):
             next_location = curr_location
             go_out = True
@@ -87,16 +88,16 @@ class MedEnv(gym.Env):
         if go_out:
             reward = -1
         else:
-            reward = np.clip(self._calc_reward(curr_location, next_location,curr_angle,next_angle), -1, 1)
+            reward = np.clip(self._calc_reward(curr_location, next_location,curr_angle,next_angle), -1, 1)#8s
 
         # update
         self.location = next_location
         self.angle=next_angle
-        self.state = self._get_state_current()
-        self._dist_current = self._calc_mutualInformation(self.location)
+        self.state = self._get_state_current()#1s
+        self._dist_current = self._calc_mutualInformation(self.location,self.angle)#4s
 
         # terminate if the agent reached the last point
-        if self._phase == "train" and self._dist_current <= 0.5:##TODO: maybe the parameter 0.5 need to be changed
+        if self._phase == "train" and self._dist_current >= 1.5:##TODO: maybe the parameter 0.5 need to be changed
             self._isOver = True
 
         # terminate if maximum number of steps is reached
@@ -120,7 +121,7 @@ class MedEnv(gym.Env):
 
         return self.state, reward, self._isOver, Info(self._dist_current, self._cnt)
 
-    def reset(self):
+    def reset(self):#5s
         """ reset state and anything related
         Returns:
             [type] -- [description]
@@ -140,9 +141,9 @@ class MedEnv(gym.Env):
         self.angle=np.transpose(np.array([np.random.randint(-5,5,1)for i in range(3)]),[1,0])[0]##TODO:need to add rotate
         # self.location = np.array(self._ctl.start_point)
         #self.location = np.array([np.random.randint(x - 15, x + 15, dtype = "int") for x in self.moving.end_point])
-        self.state = self._get_state_current()
+        self.state = self._get_state_current()#1s
 
-        self._dist_current = self._calc_mutualInformation(self.location,self.angle)
+        self._dist_current = self._calc_mutualInformation(self.location,self.angle)#4s
 
         return self.state
     def _calc_mutualInformation(self,loc,ang):##TODO: ang has no been used
@@ -161,8 +162,11 @@ class MedEnv(gym.Env):
         moving_l = np.max([bbox_l - loc+self._shape_image_moving//2, np.array([0, 0, 0])], axis=0)
         moving_r = np.max([bbox_r - loc+self._shape_image_moving//2, self._shape_image_moving//2- loc+self._shape_image_fixed], axis=0)
         state_moving = self.moving.data[moving_l[0]:moving_r[0], moving_l[1]:moving_r[1], moving_l[2]:moving_r[2]]
+        #s=time.clock()
+        state_fixed = (state_fixed / 0.12).astype(np.int16)
+        state_moving = (state_moving / 0.12).astype(np.int16)
         MI=mr.normalized_mutual_info_score(np.reshape(state_fixed,[-1]),np.reshape(state_moving,[-1]))
-
+        #print(time.clock()-s)
         return MI+area
     def _calc_reward(self, curr_location, next_location,curr_ang,next_ang):
         """ calculate the reward based on the decrease in MI to the end point
@@ -194,10 +198,12 @@ class MedEnv(gym.Env):
         moving_l = np.max([bbox_l - self.location+self._shape_image_moving//2, np.array([0, 0, 0])], axis=0)
         moving_r = np.max([bbox_r - self.location+self._shape_image_moving//2, self._shape_image_moving//2- self.location+self._shape_image_fixed], axis=0)
         state_moving = self.moving.data[moving_l[0]:moving_r[0], moving_l[1]:moving_r[1], moving_l[2]:moving_r[2]]
+        #s = time.clock()
         state_moving=resize(state_moving,(self._shape_obser[0],self._shape_obser[1],self._shape_obser[2]),order=3,
                             mode='constant',cval=0,clip=True,preserve_range=True)
         state_fixed=resize(state_fixed,(self._shape_obser[0],self._shape_obser[1],self._shape_obser[2]),order=3,
                             mode='constant',cval=0,clip=True,preserve_range=True)
+        #print(time.clock() - s)
         state=np.stack([state_fixed,state_moving],axis=0)#shape=(2,x,y,z)
 
         return state
@@ -211,10 +217,8 @@ class MedEnv(gym.Env):
         """
         # update location history
         self._loc_history[:-1] = self._loc_history[1:]
-        self._loc_history[-1] = self.location
-        #update angle history
-        self._ang_history[:-1] = self._ang_history[1:]
-        self._ang_history[-1] = self.angle
+        self._loc_history[-1] = np.concatenate([self.location,self.angle],0)
+
         # update Q-value history
         self._qvalue_history[:-1] = self._qvalue_history[1:]
         self._qvalue_history[-1] = self._qvalue

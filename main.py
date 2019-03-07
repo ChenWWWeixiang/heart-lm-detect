@@ -18,7 +18,7 @@ from CtlDQN import CtlDQN as DQN
 # batch size used in nature paper is 32 - medical is 256
 BATCH_SIZE = 8
 # breakout (84,84) - medical 2D (60,60) - medical 3D (26,26,26)
-IMAGE_SIZE = (152,152,46)#(46, 46, 46)
+IMAGE_SIZE = (64,64,32)#(46, 46, 46)
 # how many frames to keep
 # in other words, how many observations the network can see
 NUM_OBSERS = 4

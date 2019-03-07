@@ -42,7 +42,7 @@ class DataLoader(object):
         
         # split into training and evaluation
         random.seed(2019)
-        self._indexs = np.arange(len(self.T1_list))## TODO: here
+        self._indexs = np.arange(len(self.T1_list))
         random.shuffle(self._indexs)
         if self._phase == "train":
             self._indexs = self._indexs[:-1]

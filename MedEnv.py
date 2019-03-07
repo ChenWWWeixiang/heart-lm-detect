@@ -43,13 +43,13 @@ class MedEnv(gym.Env):
         # counter to limit number of steps per image
         self._cnt = 0
         # 3D or ...
-        self._ndims = len(self._shape_obser)
+        self._ndims = 2*len(self._shape_obser)
         # history buffer for storing last locations to check oscilations
         self._step_history_len = step_history_len
         self._reset_history()
         # actions, only translation
         self._action_trans = np.concatenate((np.eye(self._ndims), -1 * np.eye(self._ndims)), axis=0).astype("int")
-
+        #(dx,dy,dz,dangle1,dangle2,dangle3)
         # data loader
         self._data_loader = DataLoader(phase=self._phase, base_folder=self._base_folder)
         self._data_sampler = self._data_loader.sample_circular(shuffle=self._phase!="play")
@@ -75,16 +75,16 @@ class MedEnv(gym.Env):
         curr_location = self.location
 
         next_location = curr_location + self._action_trans[action]
-        if np.any(next_location < np.array([0, 0, 0])) or np.any(next_location >= np.array(self._shape_image)):
+        if np.any(next_location < np.array([0, 0, 0])) or np.any(next_location >= np.array(self.fixed.shape)):
             next_location = curr_location
             go_out = True
 
         # punish -1 reward if the agent tries to go out
-        if self._phase != "play":
-            if go_out:
-                reward = -1
-            else:
-                reward = np.clip(self._calc_reward(curr_location, next_location), -1, 1)
+
+        if go_out:
+            reward = -1
+        else:
+            reward = np.clip(self._calc_reward(curr_location, next_location), -1, 1)
 
         # update
         self.location = next_location
@@ -108,11 +108,9 @@ class MedEnv(gym.Env):
             self.location = self._get_location_best()
             self.state = self._get_state_current()
 
-        # update distance between current location and target point
-        if self._phase == "play":
-            self._dist_current = 0
-        else:
-            self._dist_current = self._calc_distance(self.location, self._ctl.end_point, self._image.spacing)
+        # update distance between fixed and moving
+
+        self._dist_current = self._calc_mutualInformation(self.location)
 
         return self.state, reward, self._isOver, Info(self._dist_current, self._cnt)
 
@@ -133,14 +131,15 @@ class MedEnv(gym.Env):
         ##start from a radom location
         self.location=np.transpose(np.array([np.random.randint(self._shape_obser[i]//2,self._shape_image_fixed[i]-self._shape_obser[i]/2,1)
                                 for i in range(3)]),[1,0])[0]
+        self.angle=np.transpose(np.array([np.random.randint(-5,5,1)for i in range(3)]),[1,0])[0]##TODO:need to add rotate
         # self.location = np.array(self._ctl.start_point)
         #self.location = np.array([np.random.randint(x - 15, x + 15, dtype = "int") for x in self.moving.end_point])
         self.state = self._get_state_current()
 
-        self._dist_current = self._calc_mutualInformation(self.location)##TODO:Metric function should be chaged
+        self._dist_current = self._calc_mutualInformation(self.location,self.angle)
 
         return self.state
-    def _calc_mutualInformation(self,loc):##TODO: MI and area points. Maybe weighted?
+    def _calc_mutualInformation(self,loc,ang):##TODO: MI and area points. Maybe weighted?
         half_size_l = np.array(self._shape_image_moving, dtype="int") // 2
         half_size_r = np.array(self._shape_image_moving, dtype="int") - half_size_l
 
@@ -159,14 +158,14 @@ class MedEnv(gym.Env):
         MI=mr.normalized_mutual_info_score(np.reshape(state_fixed,[-1]),np.reshape(state_moving,[-1]))
 
         return MI+area
-    def _calc_reward(self, curr_location, next_location):
+    def _calc_reward(self, curr_location, next_location,curr_ang,next_ang):
         """ calculate the reward based on the decrease in MI to the end point
         Arguments:
             curr_location {[type]} -- [description]
             next_location {[type]} -- [description]
         """
-        MI_curr = self._calc_mutualInformation(curr_location)
-        MI_next = self._calc_mutualInformation(next_location)
+        MI_curr = self._calc_mutualInformation(curr_location,curr_ang)
+        MI_next = self._calc_mutualInformation(next_location,next_ang)
 
         return MI_curr - MI_next
     def _get_state_current(self):

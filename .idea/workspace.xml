@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="66147880-ffb4-435d-86c9-f4ef616d1229" name="Default" comment="reset and load has passed test">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="66147880-ffb4-435d-86c9-f4ef616d1229" name="Default" comment="0307temp">
       <change beforePath="$PROJECT_DIR$/MedEnv.py" beforeDir="false" afterPath="$PROJECT_DIR$/MedEnv.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -56,8 +55,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/MedEnv.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="164">
-              <caret line="233" column="28" selection-start-line="233" selection-start-column="28" selection-end-line="233" selection-end-column="28" />
+            <state relative-caret-position="974">
+              <caret line="260" column="25" selection-start-line="260" selection-start-column="25" selection-end-line="260" selection-end-column="25" />
               <folding>
                 <element signature="e#118#136#0" expanded="true" />
               </folding>
@@ -215,7 +214,7 @@
       <updated>1551671211444</updated>
       <workItem from="1551699037636" duration="15266000" />
       <workItem from="1551793662208" duration="1759000" />
-      <workItem from="1551801119291" duration="28362000" />
+      <workItem from="1551801119291" duration="28737000" />
     </task>
     <task id="LOCAL-00001" summary="fist try">
       <created>1551849226777</created>
@@ -231,11 +230,18 @@
       <option name="project" value="LOCAL" />
       <updated>1551855627369</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="0307temp">
+      <created>1551926539665</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1551926539665</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="45387000" />
+    <option name="totallyTimeSpent" value="45762000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -248,7 +254,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-1" y="26" width="1922" height="1029" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25937834" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -279,7 +284,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="fist try" />
     <MESSAGE value="reset and load has passed test" />
-    <option name="LAST_COMMIT_MESSAGE" value="reset and load has passed test" />
+    <MESSAGE value="0307temp" />
+    <option name="LAST_COMMIT_MESSAGE" value="0307temp" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -469,8 +475,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/MedEnv.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="164">
-          <caret line="233" column="28" selection-start-line="233" selection-start-column="28" selection-end-line="233" selection-end-column="28" />
+        <state relative-caret-position="974">
+          <caret line="260" column="25" selection-start-line="260" selection-start-column="25" selection-end-line="260" selection-end-column="25" />
           <folding>
             <element signature="e#118#136#0" expanded="true" />
           </folding>

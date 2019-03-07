@@ -212,12 +212,16 @@ class MedEnv(gym.Env):
         # update location history
         self._loc_history[:-1] = self._loc_history[1:]
         self._loc_history[-1] = self.location
+        #update angle history
+        self._ang_history[:-1] = self._ang_history[1:]
+        self._ang_history[-1] = self.angle
         # update Q-value history
         self._qvalue_history[:-1] = self._qvalue_history[1:]
         self._qvalue_history[-1] = self._qvalue
 
     def _reset_history(self):
         self._loc_history = np.zeros([self._step_history_len, self._ndims], dtype="int")
+        self._ang_history = np.zeros([self._step_history_len, self._ndims], dtype="int")
         self._qvalue_history = np.zeros([self._step_history_len, self._num_actions])
 
     @property
@@ -249,12 +253,12 @@ class MedEnv(gym.Env):
         """ get the best location with the best Q value from locations stored in history
         """
         last_qvalue_history = self._qvalue_history[-4:]
-        last_loc_history = self._loc_history[-4:]
+        last_ang_history = self._ang_history[-4:]
         best_qvalue = np.max(last_qvalue_history, axis=1)
         best_idx = best_qvalue.argmin()
-        best_location = last_loc_history[best_idx]
+        best_angle = last_ang_history[best_idx]
 
-        return best_location
+        return best_angle
 # =============================================================================
 # ================================ ObserStack =================================
 # =============================================================================

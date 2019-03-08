@@ -82,11 +82,12 @@ class CtlDQN(MedAgent):
                 # interact
                 self.interact()
                 # training on a batch
+                #if self._cnt_iter % (self._iters_per_update//100) == 0:
                 self.update_batch()
                 # update target network
                 if self._cnt_iter % self._iters_per_update == 0:
                     self.update_target_network()
-                print(self._env.location,self._env.angle)
+                #print(self._env.location,self._env.angle)
             self.update_config_per_epoch()
 
             # evaluation

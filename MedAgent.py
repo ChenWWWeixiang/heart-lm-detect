@@ -131,7 +131,7 @@ class MedAgent(object):
         self._cnt_frame = 0
         self._cnt_epoch += 1
         # update epsilon
-        turn_epoch_0 = 10
+        turn_epoch_0 = 5
         turn_value_0 = 0.1
         turn_epoch_1 = 320
         turn_value_1 = 0.01
@@ -141,7 +141,7 @@ class MedAgent(object):
             self._epsilon = (turn_value_1 - turn_value_0) * (self._cnt_epoch - turn_epoch_0) / (turn_epoch_1 - turn_epoch_0) + turn_value_0
 
     def interact(self):
-        return self._take_n_steps(10)
+        return self._take_one_step()
 
     def _take_one_step(self):
         return self._populate_exp()

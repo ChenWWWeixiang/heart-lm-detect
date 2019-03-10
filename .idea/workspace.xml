@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="66147880-ffb4-435d-86c9-f4ef616d1229" name="Default" comment="smaller input and bin-MI">
+    <list default="true" id="66147880-ffb4-435d-86c9-f4ef616d1229" name="Default" comment="daily push">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CtlDQN.py" beforeDir="false" afterPath="$PROJECT_DIR$/CtlDQN.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MedAgent.py" beforeDir="false" afterPath="$PROJECT_DIR$/MedAgent.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DataLoader.py" beforeDir="false" afterPath="$PROJECT_DIR$/DataLoader.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MedEnv.py" beforeDir="false" afterPath="$PROJECT_DIR$/MedEnv.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
@@ -15,15 +15,15 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/heart_lm_detect$main.coverage" NAME="main Coverage Results" MODIFIED="1551932964478" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/heart_lm_detect$main.coverage" NAME="main Coverage Results" MODIFIED="1552117956812" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="225">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="267">
-              <caret line="23" column="14" lean-forward="true" selection-start-line="23" selection-start-column="14" selection-end-line="23" selection-end-column="14" />
+            <state relative-caret-position="1674">
+              <caret line="93" column="16" lean-forward="true" selection-start-line="93" selection-start-column="14" selection-end-line="93" selection-end-column="19" />
               <folding>
                 <element signature="e#264#273#0" expanded="true" />
               </folding>
@@ -34,8 +34,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/CtlDQN.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="252">
-              <caret line="92" column="57" selection-start-line="92" selection-start-column="57" selection-end-line="92" selection-end-column="57" />
+            <state relative-caret-position="74">
+              <caret line="67" column="22" selection-start-line="67" selection-start-column="13" selection-end-line="67" selection-end-column="22" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -44,10 +44,48 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/DQNModel.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1494">
+              <caret line="83" column="29" selection-start-line="83" selection-start-column="28" selection-end-line="83" selection-end-column="29" />
+              <folding>
+                <element signature="e#120#138#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/ReplayMemory.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="143">
+              <caret line="95" column="38" lean-forward="true" selection-start-line="95" selection-start-column="38" selection-end-line="95" selection-end-column="38" />
+              <folding>
+                <element signature="e#121#139#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/MedEnv.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-1726">
+              <caret line="105" column="43" selection-start-line="105" selection-start-column="29" selection-end-line="105" selection-end-column="43" />
+              <folding>
+                <element signature="e#118#136#0" expanded="true" />
+                <element signature="e#4207#5303#0" />
+                <element signature="e#7263#8927#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/MedAgent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-370">
-              <caret line="144" lean-forward="true" selection-start-line="144" selection-end-line="144" />
+            <state relative-caret-position="362">
+              <caret line="131" column="28" lean-forward="true" selection-start-line="131" selection-start-column="28" selection-end-line="131" selection-end-column="28" />
               <folding>
                 <element signature="e#120#138#0" expanded="true" />
                 <element signature="e#430#573#1" />
@@ -57,26 +95,43 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/DQNModel.py">
+        <entry file="file://$PROJECT_DIR$/../.local/lib/python3.5/site-packages/tqdm/_tqdm.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="466">
-              <caret line="77" selection-start-line="77" selection-end-line="77" />
+            <state relative-caret-position="-789">
+              <caret line="1062" column="8" selection-start-line="1062" selection-start-column="8" selection-end-line="1062" selection-end-column="8" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Utils.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="845">
+              <caret line="47" column="16" selection-start-line="47" selection-start-column="16" selection-end-line="47" selection-end-column="16" />
               <folding>
-                <element signature="e#120#138#0" expanded="true" />
+                <element signature="e#117#135#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/MedEnv.py">
+        <entry file="file://$PROJECT_DIR$/DataLoader.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="176">
-              <caret line="53" column="67" selection-start-line="53" selection-start-column="67" selection-end-line="53" selection-end-column="67" />
+            <state relative-caret-position="378">
+              <caret line="105" column="30" lean-forward="true" selection-start-line="105" selection-start-column="30" selection-end-line="105" selection-end-column="30" />
               <folding>
-                <element signature="e#118#136#0" expanded="true" />
-                <element signature="e#5387#6727#0" />
+                <element signature="e#201#210#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file:///usr/lib/python3.5/random.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="192">
+              <caret line="195" selection-start-line="195" selection-end-line="195" />
             </state>
           </provider>
         </entry>
@@ -85,36 +140,36 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>_get_state_current</find>
-      <find>_action_trans</find>
-      <find>action</find>
-      <find>_loc_history</find>
-      <find>self._loc_history</find>
-      <find>self._qvalue</find>
-      <find>fixed</find>
-      <find>_shape_obser</find>
-      <find>_indexs</find>
-      <find>location</find>
-      <find>_get_location_best</find>
-      <find>_dist_current</find>
-      <find>_oscillate</find>
-      <find>dist_error</find>
-      <find>last_state</find>
-      <find>_isOver</find>
-      <find>isOver</find>
-      <find>_init_memory</find>
-      <find>reward</find>
-      <find>normalized_mutual_info_score</find>
-      <find>time</find>
-      <find>_epsilon</find>
-      <find>reset</find>
-      <find>_load_image_pair</find>
-      <find>resize</find>
       <find>_env</find>
       <find>_num_obsers</find>
-      <find>update_batch</find>
       <find>num_obsers</find>
       <find>shape_ob</find>
+      <find>_get_location_best</find>
+      <find>_frame_done</find>
+      <find>_qvalue</find>
+      <find>_cnt_iter</find>
+      <find>action</find>
+      <find>reward</find>
+      <find>reward_var</find>
+      <find>Loss</find>
+      <find>_calc_distance</find>
+      <find>_epochs_per_eval</find>
+      <find>ITERS_PER_UPDATE</find>
+      <find>_base_conv</find>
+      <find>epochs_per_eval</find>
+      <find>DQNModel</find>
+      <find>MedEnv</find>
+      <find>max_num_steps</find>
+      <find>save_chkpoint</find>
+      <find>Epoch</find>
+      <find>MAX_NUM_STEPS</find>
+      <find>fixed</find>
+      <find>_base_folder</find>
+      <find>_load_image_pair</find>
+      <find>update_batch</find>
+      <find>CtlDQN</find>
+      <find>_env_eval</find>
+      <find>loss</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -130,11 +185,11 @@
       <list>
         <option value="$PROJECT_DIR$/ReplayMemory.py" />
         <option value="$PROJECT_DIR$/DQNModel.py" />
-        <option value="$PROJECT_DIR$/DataLoader.py" />
-        <option value="$PROJECT_DIR$/CtlDQN.py" />
         <option value="$PROJECT_DIR$/MedAgent.py" />
         <option value="$PROJECT_DIR$/MedEnv.py" />
         <option value="$PROJECT_DIR$/main.py" />
+        <option value="$PROJECT_DIR$/CtlDQN.py" />
+        <option value="$PROJECT_DIR$/DataLoader.py" />
       </list>
     </option>
   </component>
@@ -176,6 +231,7 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="restartRequiresConfirmation" value="false" />
     <property name="settings.editor.selected.configurable" value="project.propVCSSupport.ChangelistConflict" />
   </component>
   <component name="RunDashboard">
@@ -231,7 +287,7 @@
       <updated>1551671211444</updated>
       <workItem from="1551699037636" duration="15266000" />
       <workItem from="1551793662208" duration="1759000" />
-      <workItem from="1551801119291" duration="34792000" />
+      <workItem from="1551801119291" duration="55767000" />
     </task>
     <task id="LOCAL-00001" summary="fist try">
       <created>1551849226777</created>
@@ -268,11 +324,25 @@
       <option name="project" value="LOCAL" />
       <updated>1551930847834</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="smaller input and bin-MI">
+      <created>1551933035387</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1551933035387</updated>
+    </task>
+    <task id="LOCAL-00007" summary="daily push">
+      <created>1552019649056</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1552019649056</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="51817000" />
+    <option name="totallyTimeSpent" value="72792000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -287,12 +357,12 @@
     <frame x="-1" y="26" width="1922" height="1029" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49916527" visible="true" weight="0.25937834" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49916527" visible="true" weight="0.030010719" />
       <window_info id="Structure" order="1" sideWeight="0.5008347" side_tool="true" weight="0.25937834" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.22485876" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.3299435" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.18079096" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.32316384" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -318,20 +388,16 @@
     <MESSAGE value="reset and load has passed test" />
     <MESSAGE value="0307temp" />
     <MESSAGE value="smaller input and bin-MI" />
-    <option name="LAST_COMMIT_MESSAGE" value="smaller input and bin-MI" />
+    <MESSAGE value="daily push" />
+    <option name="LAST_COMMIT_MESSAGE" value="daily push" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/MedEnv.py</url>
-          <line>235</line>
-          <option name="timeStamp" value="55" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/CtlDQN.py</url>
-          <line>88</line>
-          <option name="timeStamp" value="103" />
+          <url>file://$PROJECT_DIR$/MedAgent.py</url>
+          <line>129</line>
+          <option name="timeStamp" value="105" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -344,59 +410,54 @@
     </breakpoint-manager>
     <watches-manager>
       <configuration name="PythonConfigurationType">
-        <watch expression="len(self._env._data_loader)" language="Python" />
+        <watch expression="reward_var" language="Python" />
       </configuration>
     </watches-manager>
   </component>
   <component name="debuggerHistoryManager">
     <expressions id="watch">
       <expression>
-        <expression-string>len(self._env._data_loader)</expression-string>
+        <expression-string>reward_var</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>self._env.location</expression-string>
+        <expression-string>dMI</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>self._env</expression-string>
+        <expression-string>next_location</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>qvalue.shape</expression-string>
+        <expression-string>curr_location</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>qvalue</expression-string>
+        <expression-string>MI_curr</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>batch</expression-string>
+        <expression-string>MI_next</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>batch_exp</expression-string>
+        <expression-string>reward_var.shape</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>state.shape</expression-string>
+        <expression-string>next_stae_action_qvalue.shape</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
       <expression>
-        <expression-string>state</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>EXPRESSION</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>curr_state.shape</expression-string>
+        <expression-string>next_stae_action_qvalue</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>EXPRESSION</evaluation-mode>
       </expression>
@@ -405,23 +466,6 @@
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/train_log/log/DQN.pt">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="529">
-          <caret line="47" column="16" selection-start-line="47" selection-start-column="16" selection-end-line="47" selection-end-column="16" />
-          <folding>
-            <element signature="e#117#135#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/lib/python3.5/random.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="217" selection-start-line="217" selection-end-line="217" />
-        </state>
-      </provider>
     </entry>
     <entry file="file:///usr/local/lib/python3.5/dist-packages/numpy/core/fromnumeric.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -437,27 +481,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../cwx/reg_pan_cancer/DeepRL/venv2/lib/python3.5/site-packages/sklearn/metrics/cluster/supervised.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-48">
-          <caret line="776" column="37" selection-start-line="776" selection-start-column="11" selection-end-line="776" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../cwx/reg_pan_cancer/DeepRL/venv2/lib/python3.5/site-packages/skimage/transform/_warps.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="217">
           <caret line="33" column="30" selection-start-line="33" selection-start-column="18" selection-end-line="33" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/DataLoader.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="468">
-          <caret line="98" column="29" selection-start-line="98" selection-start-column="29" selection-end-line="98" selection-end-column="29" />
-          <folding>
-            <element signature="e#201#210#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -482,64 +509,106 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/../../cwx/reg_pan_cancer/DeepRL/venv2/lib/python3.5/site-packages/sklearn/metrics/cluster/supervised.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15120">
+          <caret line="850" column="26" lean-forward="true" selection-start-line="850" selection-start-column="26" selection-end-line="850" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1674">
+          <caret line="93" column="16" lean-forward="true" selection-start-line="93" selection-start-column="14" selection-end-line="93" selection-end-column="19" />
+          <folding>
+            <element signature="e#264#273#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/ReplayMemory.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="167">
-          <caret line="52" selection-start-line="52" selection-end-line="52" />
+        <state relative-caret-position="143">
+          <caret line="95" column="38" lean-forward="true" selection-start-line="95" selection-start-column="38" selection-end-line="95" selection-end-column="38" />
           <folding>
             <element signature="e#121#139#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/CtlDQN.py">
+    <entry file="file://$PROJECT_DIR$/../.local/lib/python3.5/site-packages/tqdm/_tqdm.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
-          <caret line="92" column="57" selection-start-line="92" selection-start-column="57" selection-end-line="92" selection-end-column="57" />
+        <state relative-caret-position="-789">
+          <caret line="1062" column="8" selection-start-line="1062" selection-start-column="8" selection-end-line="1062" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="845">
+          <caret line="47" column="16" selection-start-line="47" selection-start-column="16" selection-end-line="47" selection-end-column="16" />
           <folding>
-            <element signature="e#0#9#0" expanded="true" />
+            <element signature="e#117#135#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/MedEnv.py">
+    <entry file="file:///usr/lib/python3.5/random.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="176">
-          <caret line="53" column="67" selection-start-line="53" selection-start-column="67" selection-end-line="53" selection-end-column="67" />
+        <state relative-caret-position="192">
+          <caret line="195" selection-start-line="195" selection-end-line="195" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/DataLoader.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="378">
+          <caret line="105" column="30" lean-forward="true" selection-start-line="105" selection-start-column="30" selection-end-line="105" selection-end-column="30" />
           <folding>
-            <element signature="e#118#136#0" expanded="true" />
-            <element signature="e#5387#6727#0" />
+            <element signature="e#201#210#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/DQNModel.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="466">
-          <caret line="77" selection-start-line="77" selection-end-line="77" />
+        <state relative-caret-position="1494">
+          <caret line="83" column="29" selection-start-line="83" selection-start-column="28" selection-end-line="83" selection-end-column="29" />
           <folding>
             <element signature="e#120#138#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MedEnv.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1726">
+          <caret line="105" column="43" selection-start-line="105" selection-start-column="29" selection-end-line="105" selection-end-column="43" />
+          <folding>
+            <element signature="e#118#136#0" expanded="true" />
+            <element signature="e#4207#5303#0" />
+            <element signature="e#7263#8927#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CtlDQN.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="74">
+          <caret line="67" column="22" selection-start-line="67" selection-start-column="13" selection-end-line="67" selection-end-column="22" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/MedAgent.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-370">
-          <caret line="144" lean-forward="true" selection-start-line="144" selection-end-line="144" />
+        <state relative-caret-position="362">
+          <caret line="131" column="28" lean-forward="true" selection-start-line="131" selection-start-column="28" selection-end-line="131" selection-end-column="28" />
           <folding>
             <element signature="e#120#138#0" expanded="true" />
             <element signature="e#430#573#1" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="267">
-          <caret line="23" column="14" lean-forward="true" selection-start-line="23" selection-start-column="14" selection-end-line="23" selection-end-column="14" />
-          <folding>
-            <element signature="e#264#273#0" expanded="true" />
           </folding>
         </state>
       </provider>

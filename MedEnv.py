@@ -98,7 +98,7 @@ class MedEnv(gym.Env):
         self._dist_current = self._calc_mutualInformation(self.location,self.angle)#4s
 
         # terminate if the agent reached the last point
-        if self._phase == "train" and self._dist_current >= 1.5:##TODO: maybe the parameter 0.5 need to be changed
+        if self._phase == "train" and self._dist_current >= 0.2:##TODO: maybe the parameter 0.5 need to be changed
             self._isOver = True
 
         # terminate if maximum number of steps is reached
@@ -164,11 +164,11 @@ class MedEnv(gym.Env):
         moving_r = np.max([bbox_r - loc+self._shape_image_moving//2, self._shape_image_moving//2- loc+self._shape_image_fixed], axis=0)
         state_moving = self.moving.data[moving_l[0]:moving_r[0], moving_l[1]:moving_r[1], moving_l[2]:moving_r[2]]
         #s=time.clock()
-        state_fixed = (state_fixed / 0.12).astype(np.int16)
-        state_moving = (state_moving / 0.12).astype(np.int16)
+        state_fixed = (state_fixed / 0.1).astype(np.int8)
+        state_moving = (state_moving / 0.1).astype(np.int8)
         MI=mr.normalized_mutual_info_score(np.reshape(state_fixed,[-1]),np.reshape(state_moving,[-1]))
         #print(time.clock()-s)
-        return MI+area
+        return MI
     def _calc_reward(self, curr_location, next_location,curr_ang,next_ang):
         """ calculate the reward based on the decrease in MI to the end point
         Arguments:
@@ -177,8 +177,8 @@ class MedEnv(gym.Env):
         """
         MI_curr = self._calc_mutualInformation(curr_location,curr_ang)
         MI_next = self._calc_mutualInformation(next_location,next_ang)
-
-        return MI_curr - MI_next
+        dMI=(MI_curr - MI_next)*100
+        return dMI
     def _get_state_current(self):##TODO: ang has no been used
         """ crop image data around current location to obtain what network sees
         """

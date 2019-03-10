@@ -35,7 +35,7 @@ MAX_EPOCH = 1000
 # the frequency of updating the target network
 ITERS_PER_UPDATE = 2500 # 2.5k
 # maximum number of steps per frame
-MAX_NUM_STEPS = 1000
+MAX_NUM_STEPS = 100
 # num training epochs in between model evaluations
 EPOCHS_PER_EVAL = 1
 # random seed
@@ -48,8 +48,8 @@ BASE_PREFIX = "/mnt/data2/pan_cancer/"
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--gpu", help="comma separated list of GPU(s) to use", default="1")
-    parser.add_argument("--method", help="comma separated list of type of DQN to use", default="Double, Duling")
+    parser.add_argument("--gpu", help="comma separated list of GPU(s) to use", default="5")
+    parser.add_argument("--method", help="comma separated list of type of DQN to use", default="Double, Dueling")
     parser.add_argument("--phase", help="task to perform", choices=["train", "eval", "play"], default="train")
     parser.add_argument("--logdir", help="store logs in this directory during training", default="log")
     parser.add_argument("--name", help="name of current experiment for logs", default="DQN")

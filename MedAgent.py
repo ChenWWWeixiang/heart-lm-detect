@@ -131,8 +131,8 @@ class MedAgent(object):
         self._cnt_frame = 0
         self._cnt_epoch += 1
         # update epsilon
-        turn_epoch_0 = 5
-        turn_value_0 = 0.1
+        turn_epoch_0 = 4
+        turn_value_0 = 0.2
         turn_epoch_1 = 320
         turn_value_1 = 0.01
         if self._cnt_epoch <= turn_epoch_0:
@@ -170,6 +170,7 @@ class MedAgent(object):
         else:
             last_state = self._memory.recent_state()
             last_state.append(curr_state)
+
             action, qvalue = self._action(last_state)
 
         self._env_state, reward, isOver, _ = self._env.step(action, qvalue)

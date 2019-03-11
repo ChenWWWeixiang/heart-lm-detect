@@ -137,7 +137,7 @@ class MedEnv(gym.Env):
         self._shape_image_fixed = self.fixed.shape
         self._shape_image_moving = self.moving.shape
         ##start from a radom location
-        self.location=np.transpose(np.array([np.random.randint(self._shape_obser[i]//2,self._shape_image_fixed[i]-self._shape_obser[i]/2,1)
+        self.location=np.transpose(np.array([np.random.randint(self._shape_obser[i]//2,max(self._shape_obser[i]//2+1,self._shape_image_fixed[i]-self._shape_obser[i]/2),1)
                                 for i in range(3)]),[1,0])[0]
         self.angle=np.transpose(np.array([np.random.randint(-5,5,1)for i in range(3)]),[1,0])[0]
         # self.location = np.array(self._ctl.start_point)
@@ -177,7 +177,7 @@ class MedEnv(gym.Env):
         """
         MI_curr = self._calc_mutualInformation(curr_location,curr_ang)
         MI_next = self._calc_mutualInformation(next_location,next_ang)
-        dMI=(MI_curr - MI_next)*100
+        dMI=(MI_curr - MI_next)*1000
         return dMI
     def _get_state_current(self):##TODO: ang has no been used
         """ crop image data around current location to obtain what network sees

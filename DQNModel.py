@@ -65,6 +65,7 @@ class DQNModel(nn.Module):
             )
 
     def forward(self, x):
+        x=th.Tensor.reshape(x,[x.shape[0],self._num_obsers*2,self._shape_obser[0],self._shape_obser[1],self._shape_obser[2]])
         base_conv = self._base_conv(x)
         base_conv = base_conv.view(x.size(0), -1)
 

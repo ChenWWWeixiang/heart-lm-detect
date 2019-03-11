@@ -27,28 +27,28 @@ NUM_ACTIONS = 6# 12 using 9 for debug
 # discount factor - nature (0.99) - medical (0.9)
 REWARD_GAMMA = 0.9
 # replay memory size - nature (1e6) - medical (1e5 view-patches) debug 1e4
-MAX_MEMORY_SIZE = 1e5
+MAX_MEMORY_SIZE = 5e4
 # initialization of memory buffer
-INIT_MEMORY_SIZE = MAX_MEMORY_SIZE // 200  # 500
+INIT_MEMORY_SIZE = MAX_MEMORY_SIZE // 500  # 200
 # max epochs
-MAX_EPOCH = 1000
+MAX_EPOCH = 100
 # the frequency of updating the target network
 ITERS_PER_UPDATE = 2500 # 2.5k
 # maximum number of steps per frame
-MAX_NUM_STEPS = 100
+MAX_NUM_STEPS = 50
 # num training epochs in between model evaluations
 EPOCHS_PER_EVAL = 1
 # random seed
 RANDOM_SEED = 2019
 
 # the directory containing data
-BASE_PREFIX = "/mnt/data2/pan_cancer/"
+BASE_PREFIX = "/home/data2/pan_cancer/"
 ###############################################################################
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--gpu", help="comma separated list of GPU(s) to use", default="5")
+    parser.add_argument("--gpu", help="comma separated list of GPU(s) to use", default="3")
     parser.add_argument("--method", help="comma separated list of type of DQN to use", default="Double, Dueling")
     parser.add_argument("--phase", help="task to perform", choices=["train", "eval", "play"], default="train")
     parser.add_argument("--logdir", help="store logs in this directory during training", default="log")
@@ -62,7 +62,7 @@ if __name__ == "__main__":
     else:
         USE_CUDA = False
     
-    args.logdir = os.path.join("./train_log", args.logdir)
+    args.logdir = os.path.join("./train_log1000.2", args.logdir)
     if not os.path.isdir(args.logdir):
         os.makedirs(args.logdir)
     MODEL_PATH = os.path.join(args.logdir, args.name + ".pt")

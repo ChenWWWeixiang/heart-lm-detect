@@ -32,7 +32,7 @@ class DataLoader(object):
         #self._return_ctl = self._phase != "play"
 
         # read image list
-        self.T2_list = glob("{}/*.mha".format(os.path.join(self._base_folder, "resampleT2")))
+        self.T2_list = glob("{}/*.mha".format(os.path.join(self._base_folder, "T2")))
         self.T2_list.sort()
         # read ground truth if training or evaluation
 
@@ -90,7 +90,7 @@ class DataLoader(object):
         fixed.spacing = np.array(image_sitk.GetSpacing())
 
         name=self.T1_list[idx].split('/')[-1].split('.mha')[0]
-        T2_list=glob(self._base_folder+'/resampleT2/*to'+name+'*.mha')
+        T2_list=glob(self._base_folder+'/T2/*to'+name+'*.mha')
         ii=random.randint(0,len(T2_list)-1)
         image_sitk = sitk.ReadImage(T2_list[ii], sitk.sitkFloat32)
         image_np_T2 = sitk.GetArrayFromImage(image_sitk)

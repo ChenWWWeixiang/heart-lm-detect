@@ -99,7 +99,7 @@ class CtlDQN(MedAgent):
                 rewards, infos = self.evaluate()
                 stati = unpacking_stati(rewards, infos)
                 
-                print("Epoch: [{}] Average reward: {} Average distance: {} Average step: {}".format(self._cnt_epoch - 1, stati.reward_mean, stati.dist_mean, stati.step_mean))
+                print("Epoch: [{}] Average reward: {} Average score: {} Average step: {}".format(self._cnt_epoch - 1, stati.reward_mean, stati.dist_mean, stati.step_mean))
 
                 self.save_chkpoint()
                 print("*"*50)
@@ -135,6 +135,7 @@ class CtlDQN(MedAgent):
         }, self._model_path)
         print("[!] Saved!")
 
+
     def load_chkpoint(self):
         """ load model parameters from checkpoint model """
         print("[*] Loading checkpoint '{}' ...".format(self._model_path))
@@ -143,6 +144,7 @@ class CtlDQN(MedAgent):
                 chk_point = th.load(self._model_path)
                 self._actor.load_state_dict(chk_point["state_dict"])
                 self._args = chk_point["args"]
+                self._cnt_epoch=chk_point["epoch"]
             except FileNotFoundError:
                 print("Can\'t found checkpoint '{}'".format(self._model_path))
             print("[!] Load SUCCESS!")

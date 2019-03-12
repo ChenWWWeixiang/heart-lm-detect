@@ -93,9 +93,9 @@ class MedAgent(object):
         action_var = to_tensor_var(batch.action, self._use_cuda, dtype="int64")
         reward_var = to_tensor_var(batch.reward, self._use_cuda, dtype="float32")
         isOver_var = to_tensor_var(batch.isOver, self._use_cuda, dtype="float32")
-        state_var=th.Tensor.reshape(state_var,[self._batch_size,2*self._num_obsers,self._shape_obser[0],self._shape_obser[1],self._shape_obser[2]])
-        next_state_var = th.Tensor.reshape(next_state_var, [self._batch_size, 2 * self._num_obsers, self._shape_obser[0],
-                                                  self._shape_obser[1], self._shape_obser[2]])
+        #state_var=th.Tensor.reshape(state_var,[self._batch_size,2*self._num_obsers,self._shape_obser[0],self._shape_obser[1],self._shape_obser[2]])
+        #next_state_var = th.Tensor.reshape(next_state_var, [self._batch_size, 2 * self._num_obsers, self._shape_obser[0],
+        #                                          self._shape_obser[1], self._shape_obser[2]])
         # through the DQN & target DQN
         qvalue = self._actor.forward(state_var).gather(1, action_var[:, None])
         next_qvalue = self._target.forward(next_state_var).detach()

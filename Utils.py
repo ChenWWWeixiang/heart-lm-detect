@@ -17,7 +17,6 @@ def to_tensor_var(x, use_cuda=True, dtype=None):
     IntTensor = th.cuda.IntTensor if use_cuda else th.IntTensor
     CharTensor = th.cuda.CharTensor if use_cuda else th.CharTensor
     ByteTensor = th.cuda.ByteTensor if use_cuda else th.ByteTensor
-
     if dtype is None:
         return Variable(FloatTensor(x))
     elif dtype == "float32":

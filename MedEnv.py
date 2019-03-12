@@ -13,7 +13,7 @@ from collections import Counter, deque, namedtuple
 from DataLoader import DataLoader
 
 Info = namedtuple("Info",
-                        ["dist_score", "steps"])
+                        ["dist_error", "steps"])
 
 class MedEnv(gym.Env):
     """ a class represents enviroment
@@ -95,7 +95,7 @@ class MedEnv(gym.Env):
         self.location = next_location
         self.angle=next_angle
         self.state = self._get_state_current()#1s
-        self._dist_current = self._calc_mutualInformation(self.location,self.angle)#4s
+        self._dist_current = self._calc_mutualInformation(self.location,self.angle)
 
         # terminate if the agent reached the last point
         if self._phase == "train" and self._dist_current >= 0.2:##TODO: maybe the parameter 0.5 need to be changed
@@ -177,7 +177,7 @@ class MedEnv(gym.Env):
         """
         MI_curr = self._calc_mutualInformation(curr_location,curr_ang)
         MI_next = self._calc_mutualInformation(next_location,next_ang)
-        dMI=(MI_curr - MI_next)*1000
+        dMI=(MI_next-MI_curr)*1000
         return dMI
     def _get_state_current(self):##TODO: ang has no been used
         """ crop image data around current location to obtain what network sees
@@ -235,7 +235,7 @@ class MedEnv(gym.Env):
         """
         unique, counts = np.unique(self._loc_history, axis=0, return_counts=True)
         counts_sort = counts.argsort()
-        if np.all(unique[counts_sort[-1]] == [0, 0, 0]):
+        if np.all(unique[counts_sort[-1]] == [0, 0, 0,0,0,0]):
             if counts[counts_sort[-2]] > 3:
                 return True
             else:
@@ -268,7 +268,7 @@ class MedEnv(gym.Env):
 # ================================ ObserStack =================================
 # =============================================================================
 
-class ObserStack(gym.Wrapper):##TODO:What is it?
+class ObserStack(gym.Wrapper):
     """ used when not training, wrapper for MedEnv """
     def __init__(self, env, num_obsers):
         super(ObserStack, self).__init__(env)

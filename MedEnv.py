@@ -113,7 +113,7 @@ class MedEnv(gym.Env):
         if self._phase != "train" and self._oscillate:
             self._isOver = True
             self.location = self._get_location_best()
-            self.angle=self._get_get_angle_best()
+            self.angle=self._get_angle_best()
             self.state = self._get_state_current()
 
         # update distance between fixed and moving
@@ -250,7 +250,7 @@ class MedEnv(gym.Env):
         last_loc_history = self._loc_history[-4:]
         best_qvalue = np.max(last_qvalue_history, axis=1)
         best_idx = best_qvalue.argmin()
-        best_location = last_loc_history[best_idx]
+        best_location = last_loc_history[best_idx,:3]
 
         return best_location
 
@@ -261,7 +261,7 @@ class MedEnv(gym.Env):
         last_ang_history = self._ang_history[-4:]
         best_qvalue = np.max(last_qvalue_history, axis=1)
         best_idx = best_qvalue.argmin()
-        best_angle = last_ang_history[best_idx]
+        best_angle = last_ang_history[best_idx,3:]
 
         return best_angle
 # =============================================================================

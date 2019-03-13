@@ -131,8 +131,8 @@ class MedAgent(object):
         self._cnt_frame = 0
         self._cnt_epoch += 1
         # update epsilon
-        turn_epoch_0 = 4
-        turn_value_0 = 0.2
+        turn_epoch_0 = 8
+        turn_value_0 = 0.1
         turn_epoch_1 = 320
         turn_value_1 = 0.01
         if self._cnt_epoch <= turn_epoch_0:

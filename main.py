@@ -48,7 +48,7 @@ BASE_PREFIX = "/home/data2/pan_cancer/"
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--gpu", help="comma separated list of GPU(s) to use", default="3")
+    parser.add_argument("--gpu", help="comma separated list of GPU(s) to use", default="2")
     parser.add_argument("--method", help="comma separated list of type of DQN to use", default="Double, Dueling")
     parser.add_argument("--phase", help="task to perform", choices=["train", "eval", "play"], default="train")
     parser.add_argument("--logdir", help="store logs in this directory during training", default="log")
@@ -62,7 +62,7 @@ if __name__ == "__main__":
     else:
         USE_CUDA = False
     
-    args.logdir = os.path.join("./train_log1000.2", args.logdir)
+    args.logdir = os.path.join("./train_log", args.logdir)
     if not os.path.isdir(args.logdir):
         os.makedirs(args.logdir)
     MODEL_PATH = os.path.join(args.logdir, args.name + ".pt")

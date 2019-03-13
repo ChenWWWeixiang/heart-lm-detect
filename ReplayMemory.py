@@ -57,7 +57,7 @@ class ReplayMemory(object):
     def recent_state(self):
         """ return a list of recent state: (num_obsers-1,) + state_size """
         lst = list(self._obser_history)
-        states = [np.zeros(self._shape_obser, dtype="float32")] * (self._num_obsers - 1 - len(lst))
+        states = [np.zeros([2,self._shape_obser[0],self._shape_obser[1],self._shape_obser[2]], dtype="float32")] * (self._num_obsers - 1 - len(lst))
         states.extend([k for k in lst])
         return states
 

@@ -15,10 +15,12 @@ from Utils import *
 Experience = namedtuple("Experience",
                         ["state", "action", "reward", "isOver"])
 
-class MedAgent(object):
-    """ An agent learned with DQN using replay memory and temporal difference 
+
+class SimpleAgent(object):
+    """ An agent learned with DQN using replay memory and temporal difference
     - use a value network to estimate the state-action value
     """
+
     def __init__(self,
                  batch_size,
                  shape_obser,
@@ -31,7 +33,7 @@ class MedAgent(object):
                  optim_method="adam",
                  actor_lr=0.001,
                  use_cuda=True):
-        super(MedAgent, self).__init__()
+        super(SimpleAgent, self).__init__()
         self._batch_size = batch_size
         self._shape_obser = shape_obser
         self._num_obsers = num_obsers
@@ -62,7 +64,7 @@ class MedAgent(object):
         self._env_state = self._env.reset()
 
     def before_train(self, env):
-        """ several manual initialization before training """        
+        """ several manual initialization before training """
         self._init_memory()
 
         if self._optim_method == "adam":
@@ -72,42 +74,29 @@ class MedAgent(object):
         elif self._optim_method == "sgd":
             self._actor_optim = th.optim.SGD(self._actor.parameters(), lr=self._actor_lr)
 
-        self._target = DQNModel(self._num_actions, self._shape_obser, self._num_obsers, self._drl_method)
-        if self._use_cuda:
-            self._target.cuda()
-        self.update_target_network()
+        #self._target = DQNModel(self._num_actions, self._shape_obser, self._num_obsers, self._drl_method)
+        #if self._use_cuda:
+        #    self._target.cuda()
+        #self.update_target_network()
 
-    def update_target_network(self):
-        """ update parameters in target DQN """
-        self._target.load_state_dict(self._actor.state_dict())
-        self._target.eval()
-    
-    def update_batch(self):#7.5s
+
+    def update_batch(self):  # 7.5s
         """ train on a batch """
         start_time = time.time()
 
         # fetch a batch from memory
         batch = self._memory.sample(self._batch_size)
         state_var = to_tensor_var([x[:-1] for x in batch.state], self._use_cuda, dtype="float32")
-        next_state_var = to_tensor_var([x[1:] for x in batch.state], self._use_cuda, dtype="float32")
+        #next_state_var = to_tensor_var([x[1:] for x in batch.state], self._use_cuda, dtype="float32")
         action_var = to_tensor_var(batch.action, self._use_cuda, dtype="int64")
         reward_var = to_tensor_var(batch.reward, self._use_cuda, dtype="float32")
-        isOver_var = to_tensor_var(batch.isOver, self._use_cuda, dtype="float32")
-        #state_var=th.Tensor.reshape(state_var,[self._batch_size,2*self._num_obsers,self._shape_obser[0],self._shape_obser[1],self._shape_obser[2]])
-        #next_state_var = th.Tensor.reshape(next_state_var, [self._batch_size, 2 * self._num_obsers, self._shape_obser[0],
-        #                                          self._shape_obser[1], self._shape_obser[2]])
-        # through the DQN & target DQN
+        #isOver_var = to_tensor_var(batch.isOver, self._use_cuda, dtype="float32")
+
         qvalue = self._actor.forward(state_var).gather(1, action_var[:, None])
-        next_qvalue = self._target.forward(next_state_var).detach()
+        #next_qvalue = self._target.forward(next_state_var).detach()
         # compute target Q-value, using basic or Double algorithm
-        if "Double" not in self._drl_method:
-            next_stae_action_qvalue = th.max(next_qvalue, dim=1, keepdim=True)[0]
-        else:
-            double_next_qvalue = self._actor.forward(next_state_var).detach()
-            double_next_action = th.argmax(double_next_qvalue, dim=1, keepdim=True)
-            next_stae_action_qvalue = next_qvalue.gather(1, double_next_action)
-        target_qvalue = reward_var[:, None] + (1.0 - isOver_var[:, None]) * self._reward_gamma * next_stae_action_qvalue
-        
+        target_qvalue = reward_var[:, None]
+
         # for debug
 
         # update
@@ -117,7 +106,10 @@ class MedAgent(object):
         th.nn.utils.clip_grad_norm_(self._actor.parameters(), max_norm=10)
         self._actor_optim.step()
 
-        print("Epoch: [{:<4d}] Iter: [{:<4d}] Env: [{:d}-{:<3d}] Speed: {:.2f}/sec Loss: {:.4f} Epsilon: {:.2f} Loc:{}".format(self._cnt_epoch, self._cnt_iter - self._buff_iter, self._cnt_frame, self._env.get_cnt(), self._batch_size / (time.time() - start_time), loss.item(), self._epsilon,self._env.location))
+        print(
+            "Epoch: [{:<4d}] Iter: [{:<4d}] Env: [{:d}-{:<3d}] Speed: {:.2f}/sec Loss: {:.4f} Epsilon: {:.2f} Loc:{}".format(
+                self._cnt_epoch, self._cnt_iter - self._buff_iter, self._cnt_frame, self._env.get_cnt(),
+                self._batch_size / (time.time() - start_time), loss.item(), self._epsilon, self._env.location))
 
         # counter
         self._cnt_iter += 1
@@ -138,15 +130,16 @@ class MedAgent(object):
         if self._cnt_epoch <= turn_epoch_0:
             self._epsilon = (turn_value_0 - 1.0) * self._cnt_epoch / turn_epoch_0 + 1
         elif self._cnt_epoch <= turn_epoch_1:
-            self._epsilon = (turn_value_1 - turn_value_0) * (self._cnt_epoch - turn_epoch_0) / (turn_epoch_1 - turn_epoch_0) + turn_value_0
+            self._epsilon = (turn_value_1 - turn_value_0) * (self._cnt_epoch - turn_epoch_0) / (
+                        turn_epoch_1 - turn_epoch_0) + turn_value_0
 
     def interact(self):
         return self._take_n_steps(10)
 
     def _take_one_step(self):
         return self._populate_exp()
-        
-    def _take_n_steps(self,n):
+
+    def _take_n_steps(self, n):
         for i in range(n):
             self._take_one_step()
         return
@@ -163,7 +156,7 @@ class MedAgent(object):
         """ populate a transition by epsilon-greedy """
         curr_state = self._env_state
 
-        qvalue = [0,] * self._num_actions
+        qvalue = [0, ] * self._num_actions
 
         if np.random.random() <= self._epsilon:
             action = np.random.choice(self._num_actions)
@@ -178,7 +171,7 @@ class MedAgent(object):
         if isOver:
             self._env_state = self._env.reset()
             self._frame_done = True
-        
+
         self._memory.append(Experience(curr_state, action, reward, isOver))
 
     def _action(self, state):

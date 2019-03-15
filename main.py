@@ -35,7 +35,7 @@ MAX_EPOCH = 100
 # the frequency of updating the target network
 ITERS_PER_UPDATE = 2500 # 2.5k
 # maximum number of steps per frame
-MAX_NUM_STEPS = 30
+MAX_NUM_STEPS = 60
 # num training epochs in between model evaluations
 EPOCHS_PER_EVAL = 1
 # random seed
@@ -62,7 +62,7 @@ if __name__ == "__main__":
     else:
         USE_CUDA = False
     
-    args.logdir = os.path.join("./train_log", args.logdir)
+    args.logdir = os.path.join("./train_log10steps", args.logdir)
     if not os.path.isdir(args.logdir):
         os.makedirs(args.logdir)
     MODEL_PATH = os.path.join(args.logdir, args.name + ".pt")

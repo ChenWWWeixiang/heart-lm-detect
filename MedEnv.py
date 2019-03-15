@@ -71,6 +71,7 @@ class MedEnv(gym.Env):
         Returns:
             [type] -- [description]
         """
+        #a=time.time()
         go_out = False
         self._qvalue = qvalue
         self._isOver = False
@@ -119,7 +120,7 @@ class MedEnv(gym.Env):
         # update distance between fixed and moving
 
 
-
+        #print(time.time()-a)
         return self.state, reward, self._isOver, Info(self._dist_current, self._cnt)
 
     def reset(self):#5s
@@ -286,3 +287,5 @@ class ObserStack(gym.Wrapper):
         obser, reward, isOver, info = self.env.step(action, qvalue)
         self.frames.append(obser)
         return self.frames, reward, isOver, info
+    def get_loc(self):
+        return self.env.location,self.env.fixed.name,self.env.moving.name

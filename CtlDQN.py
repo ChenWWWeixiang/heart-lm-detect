@@ -1,11 +1,12 @@
 import os
-import random
+import random,time
 import numpy as np
 from collections import deque
 
 from DataLoader import DataLoader
 from MedEnv import MedEnv, ObserStack
 from MedAgent import MedAgent
+#from SimpleAgent import SimpleAgent as MedAgent
 from Utils import *
 
 class CtlDQN(MedAgent):
@@ -74,19 +75,24 @@ class CtlDQN(MedAgent):
 
     def train(self):
         self.load_chkpoint()
-
+        self.update_config_per_epoch()
         self.before_train(self._env)
 
         while self._cnt_epoch < self._max_epoch:
             while self._cnt_frame < len(self._env._data_loader):
                 # interact
-                self.interact()
+                #t1=time.time()
+                self.interact()#2.6s
+                #t2=time.time()
+                #print(t2-t1)
                 # training on a batch
                 #if self._cnt_iter % (self._iters_per_update//100) == 0:
                 self.update_batch()
+                #t3 = time.time()
+                #print(t3 - t2)
                 # update target network
-                if self._cnt_iter % self._iters_per_update == 0:
-                    self.update_target_network()
+                #if self._cnt_iter % self._iters_per_update == 0:
+                #    self.update_target_network()
                 #print(self._env.location,self._env.angle)
             self.save_chkpoint()
             self.update_config_per_epoch()
@@ -96,7 +102,7 @@ class CtlDQN(MedAgent):
                 print("*"*50)
                 print("[*] Perform evaluation")
 
-                rewards, infos = self.evaluate()
+                rewards, infos,locs = self.evaluate()
                 stati = unpacking_stati(rewards, infos)
                 
                 print("Epoch: [{}] Average reward: {} Average score: {} Average step: {}".format(self._cnt_epoch - 1, stati.reward_mean, stati.dist_mean, stati.step_mean))
@@ -110,6 +116,7 @@ class CtlDQN(MedAgent):
     def evaluate(self):
         rewards = []
         infos = []
+        locs=[]
         for i in range(len(self._env_eval.env._data_loader)):
             rewards_i = []
             infos_i = []
@@ -122,8 +129,9 @@ class CtlDQN(MedAgent):
                 infos_i.append(info)
             rewards.append(rewards_i)
             infos.append(infos_i)
+            locs.append(self._env_eval.get_loc())
         
-        return rewards, infos
+        return rewards, infos,locs
 
     def save_chkpoint(self):
         """ save model parameters into checkpoint model """

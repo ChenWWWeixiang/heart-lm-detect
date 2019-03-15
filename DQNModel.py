@@ -71,6 +71,7 @@ class DQNModel(nn.Module):
 
         if "Dueling" not in self._method:
             Q = self._base_fc(base_conv)
+
         else:
             state_fc = self._state_fc(base_conv)
             advan_fc = self._advan_fc(base_conv)

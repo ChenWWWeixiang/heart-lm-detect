@@ -45,9 +45,9 @@ class DataLoader(object):
         self._indexs = np.arange(len(self.T1_list))
         random.shuffle(self._indexs)
         if self._phase == "train":
-            self._indexs = self._indexs[:-1]
+            self._indexs = self._indexs
         elif self._phase == "eval":
-            self._indexs = self._indexs[-1:]
+            self._indexs = self._indexs
         
     def __len__(self):
         return len(self._indexs)

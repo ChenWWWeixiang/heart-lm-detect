@@ -71,15 +71,15 @@ class CtlDQN(MedAgent):
                                                shape_obser=self._shape_obser,
                                                num_actions=self._num_actions,
                                                max_num_steps=self._max_num_steps),
-                                    num_obsers=self._num_obsers)
+                                                num_obsers=self._num_obsers)
 
     def train(self):
         self.load_chkpoint()
-        self.update_config_per_epoch()
-        self.before_train(self._env)
 
+        self.before_train(self._env)
+        self.update_config_per_epoch()
         while self._cnt_epoch < self._max_epoch:
-            while self._cnt_frame < len(self._env._data_loader):
+            while self._cnt_frame < len(self._env._data_loader) and False:
                 # interact
                 #t1=time.time()
                 self.interact()#2.6s
@@ -111,7 +111,17 @@ class CtlDQN(MedAgent):
                 print("*"*50)
 
     def play(self):
-        pass
+        for i in range(len(self._env_eval.env._data_loader)):
+            state = self._env_eval.reset()
+            print(self._env_eval.env.moving.name.split('/')[-1]+' is coming!')
+            print('from '+str(self._env_eval.env.location)+' and initial MI is '+str(self._env_eval.env._calc_now_MI()))
+            isOver = False
+            cnt=0
+            while not isOver:
+                action, qvalue = self._action(state)
+                state, reward, isOver, info = self._env_eval.step(action, qvalue)
+                print('step'+str(cnt)+' Q:'+str(qvalue)+' action:'+str(action)+' loc:'+str(self._env_eval.env.location)+'  MI: '+str(self._env_eval.env._calc_now_MI())+ '  reward: '+str(reward))
+                cnt+=1
 
     def evaluate(self):
         rewards = []
@@ -130,7 +140,7 @@ class CtlDQN(MedAgent):
             rewards.append(rewards_i)
             infos.append(infos_i)
             locs.append(self._env_eval.get_loc())
-        
+            ##TODO:print name and loc to mem
         return rewards, infos,locs
 
     def save_chkpoint(self):
@@ -151,7 +161,7 @@ class CtlDQN(MedAgent):
             try:
                 chk_point = th.load(self._model_path)
                 self._actor.load_state_dict(chk_point["state_dict"])
-                self._args = chk_point["args"]
+                #self._args = chk_point["args"]
                 self._cnt_epoch=chk_point["epoch"]
             except FileNotFoundError:
                 print("Can\'t found checkpoint '{}'".format(self._model_path))

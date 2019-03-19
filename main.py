@@ -35,7 +35,7 @@ MAX_EPOCH = 100
 # the frequency of updating the target network
 ITERS_PER_UPDATE = 2500 # 2.5k
 # maximum number of steps per frame
-MAX_NUM_STEPS = 60
+MAX_NUM_STEPS = 100
 # num training epochs in between model evaluations
 EPOCHS_PER_EVAL = 1
 # random seed
@@ -49,9 +49,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--gpu", help="comma separated list of GPU(s) to use", default="2")
-    parser.add_argument("--method", help="comma separated list of type of DQN to use", default="Double, Dueling")
+    parser.add_argument("--method", help="comma separated list of type of DQN to use", default="Double")
     parser.add_argument("--phase", help="task to perform", choices=["train", "eval", "play"], default="train")
-    parser.add_argument("--logdir", help="store logs in this directory during training", default="log")
+    parser.add_argument("--logdir", help="store logs in this directory during training", default="0319_double2")
     parser.add_argument("--name", help="name of current experiment for logs", default="DQN")
 
     args = parser.parse_args()
@@ -62,7 +62,8 @@ if __name__ == "__main__":
     else:
         USE_CUDA = False
     
-    args.logdir = os.path.join("./train_log10steps", args.logdir)
+    args.logdir = os.path.join("./train", args.logdir)
+    #args.logdir = os.path.join("./train_logsimple", args.logdir)
     if not os.path.isdir(args.logdir):
         os.makedirs(args.logdir)
     MODEL_PATH = os.path.join(args.logdir, args.name + ".pt")

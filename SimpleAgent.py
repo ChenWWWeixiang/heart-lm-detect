@@ -107,9 +107,9 @@ class SimpleAgent(object):
         self._actor_optim.step()
 
         print(
-            "Epoch: [{:<4d}] Iter: [{:<4d}] Env: [{:d}-{:<3d}] Speed: {:.2f}/sec Loss: {:.4f} Epsilon: {:.2f} Loc:{}".format(
+            "Simple Epoch: [{:<4d}] Iter: [{:<4d}] Env: [{:d}-{:<3d}] Speed: {:.2f}/sec Loss: {:.4f} Epsilon: {:.2f} Loc:{} MI:{}".format(
                 self._cnt_epoch, self._cnt_iter - self._buff_iter, self._cnt_frame, self._env.get_cnt(),
-                self._batch_size / (time.time() - start_time), loss.item(), self._epsilon, self._env.location))
+                self._batch_size / (time.time() - start_time), loss.item(), self._epsilon, self._env.location,self._env._calc_now_MI()))
 
         # counter
         self._cnt_iter += 1

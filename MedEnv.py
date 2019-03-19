@@ -99,7 +99,7 @@ class MedEnv(gym.Env):
         self._dist_current = self._calc_mutualInformation(self.location,self.angle)
 
         # terminate if the agent reached the last point
-        if self._phase == "train" and self._dist_current >= 0.2:##TODO: maybe the parameter 0.5 need to be changed
+        if self._phase == "train" and self._dist_current >= 0.23:##TODO: maybe the parameter 0.5 need to be changed
             self._isOver = True
 
         # terminate if maximum number of steps is reached
@@ -111,7 +111,7 @@ class MedEnv(gym.Env):
         self._update_history()
 
         # check if agent oscillates
-        if self._phase != "train" and self._oscillate:
+        if self._phase != "train" and self._oscillate and self._dist_current >= 0.2:
             self._isOver = True
             self.location = self._get_location_best()
             self.angle=self._get_angle_best()
@@ -119,7 +119,7 @@ class MedEnv(gym.Env):
 
         # update distance between fixed and moving
 
-
+        self.offset = self.location - self._shape_image_fixed // 2
         #print(time.time()-a)
         return self.state, reward, self._isOver, Info(self._dist_current, self._cnt)
 
@@ -138,16 +138,17 @@ class MedEnv(gym.Env):
         self._shape_image_fixed = self.fixed.shape
         self._shape_image_moving = self.moving.shape
         ##start from a radom location
-        self.location=np.transpose(np.array([np.random.randint(self._shape_obser[i]//2,max(self._shape_obser[i]//2+1,self._shape_image_fixed[i]-self._shape_obser[i]/2),1)
-                                for i in range(3)]),[1,0])[0]
+        self.location=self._shape_image_fixed//2-np.transpose(np.array([np.random.randint(-5,5,1) for i in range(3)]),[1,0])[0]
         self.angle=np.transpose(np.array([np.random.randint(-5,5,1)for i in range(3)]),[1,0])[0]
         # self.location = np.array(self._ctl.start_point)
         #self.location = np.array([np.random.randint(x - 15, x + 15, dtype = "int") for x in self.moving.end_point])
         self.state = self._get_state_current()#1s
-
+        self.offset=self.location-self._shape_image_fixed//2
         self._dist_current = self._calc_mutualInformation(self.location,self.angle)#4s
 
         return self.state
+    def _calc_now_MI(self):
+        return self._calc_mutualInformation(self.location,self.angle)
     def _calc_mutualInformation(self,loc,ang):##TODO: ang has no been used
         half_size_l = np.array(self._shape_image_moving, dtype="int") // 2
         half_size_r = np.array(self._shape_image_moving, dtype="int") - half_size_l
@@ -178,14 +179,14 @@ class MedEnv(gym.Env):
         """
         MI_curr = self._calc_mutualInformation(curr_location,curr_ang)
         MI_next = self._calc_mutualInformation(next_location,next_ang)
-        dMI=(MI_next-MI_curr)*1000
+        dMI=(MI_next-MI_curr)*10
         return dMI
-    def _get_state_current(self):##TODO: ang has no been used
+    def _get_state_current(self):
         """ crop image data around current location to obtain what network sees
         """
         # initialization
 
-        current_angle=self.angle##TODO: ang has no been used
+        current_angle=self.angle
 
         half_size_l = np.array(self._shape_image_moving, dtype="int") // 2
         half_size_r = np.array(self._shape_image_moving, dtype="int") - half_size_l

@@ -117,7 +117,7 @@ class MedAgent(object):
         th.nn.utils.clip_grad_norm_(self._actor.parameters(), max_norm=10)
         self._actor_optim.step()
 
-        print("Epoch: [{:<4d}] Iter: [{:<4d}] Env: [{:d}-{:<3d}] Speed: {:.2f}/sec Loss: {:.4f} Epsilon: {:.2f} Loc:{}".format(self._cnt_epoch, self._cnt_iter - self._buff_iter, self._cnt_frame, self._env.get_cnt(), self._batch_size / (time.time() - start_time), loss.item(), self._epsilon,self._env.location))
+        print("Epoch: [{:<4d}] Iter: [{:<4d}] Env: [{:d}-{:<3d}] Speed: {:.2f}/sec Loss: {:.4f} Epsilon: {:.2f}".format(self._cnt_epoch, self._cnt_iter - self._buff_iter, self._cnt_frame, self._env.get_cnt(), self._batch_size / (time.time() - start_time), loss.item(), self._epsilon))
 
         # counter
         self._cnt_iter += 1
@@ -180,6 +180,7 @@ class MedAgent(object):
             self._frame_done = True
         
         self._memory.append(Experience(curr_state, action, reward, isOver))
+        print('Locoffset:{} MI:{}'.format(self._env.offset,self._env._calc_now_MI()))
 
     def _action(self, state):
         state_var = to_tensor_var(state, use_cuda=self._use_cuda)

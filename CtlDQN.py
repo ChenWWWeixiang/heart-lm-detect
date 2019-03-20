@@ -79,7 +79,7 @@ class CtlDQN(MedAgent):
         self.before_train(self._env)
         self.update_config_per_epoch()
         while self._cnt_epoch < self._max_epoch:
-            while self._cnt_frame < len(self._env._data_loader) and False:
+            while self._cnt_frame < len(self._env._data_loader):
                 # interact
                 #t1=time.time()
                 self.interact()#2.6s

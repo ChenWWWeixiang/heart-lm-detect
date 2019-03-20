@@ -84,19 +84,19 @@ class MedEnv(gym.Env):
         if np.any(next_location < np.array([0, 0, 0])) or np.any(next_location >= np.array(self.fixed.shape)):
             next_location = curr_location
             go_out = True
-
+        next_state=self._get_state_current(next_location,next_angle)
         # punish -1 reward if the agent tries to go out
 
         if go_out:
             reward = -1
         else:
-            reward = np.clip(self._calc_reward(curr_location, next_location,curr_angle,next_angle), -1, 1)#8s
+            reward = np.clip(self._calc_reward(self.state,next_state), -1, 1)#8s
 
         # update
         self.location = next_location
         self.angle=next_angle
-        self.state = self._get_state_current()#1s
-        self._dist_current = self._calc_mutualInformation(self.location,self.angle)
+        self.state = self._get_state_current(self.location,self.angle)#1s
+        self._dist_current = self._calc_mutualInformation(self.state)
 
         # terminate if the agent reached the last point
         if self._phase == "train" and self._dist_current >= 0.23:##TODO: maybe the parameter 0.5 need to be changed
@@ -115,7 +115,7 @@ class MedEnv(gym.Env):
             self._isOver = True
             self.location = self._get_location_best()
             self.angle=self._get_angle_best()
-            self.state = self._get_state_current()
+            self.state = self._get_state_current(self.location,self.angle)
 
         # update distance between fixed and moving
 
@@ -142,14 +142,14 @@ class MedEnv(gym.Env):
         self.angle=np.transpose(np.array([np.random.randint(-5,5,1)for i in range(3)]),[1,0])[0]
         # self.location = np.array(self._ctl.start_point)
         #self.location = np.array([np.random.randint(x - 15, x + 15, dtype = "int") for x in self.moving.end_point])
-        self.state = self._get_state_current()#1s
+        self.state = self._get_state_current(self.location,self.angle)#1s
         self.offset=self.location-self._shape_image_fixed//2
-        self._dist_current = self._calc_mutualInformation(self.location,self.angle)#4s
+        self._dist_current = self._calc_mutualInformation(self.state)#4s
 
         return self.state
     def _calc_now_MI(self):
-        return self._calc_mutualInformation(self.location,self.angle)
-    def _calc_mutualInformation(self,loc,ang):##TODO: ang has no been used
+        return self._calc_mutualInformation(self.state)
+    def _calc_mutualInformation(self,loc,ang):#ang has no been used
         half_size_l = np.array(self._shape_image_moving, dtype="int") // 2
         half_size_r = np.array(self._shape_image_moving, dtype="int") - half_size_l
 
@@ -171,28 +171,40 @@ class MedEnv(gym.Env):
         MI=mr.normalized_mutual_info_score(np.reshape(state_fixed,[-1]),np.reshape(state_moving,[-1]))
         #print(time.clock()-s)
         return MI
-    def _calc_reward(self, curr_location, next_location,curr_ang,next_ang):
+    def _calc_mutualInformation(self,state):#ang has no been used
+
+        state_moving = state[1,:,:,:]
+        state_fixed=state[0,:,:,:]
+        #s=time.clock()
+        state_fixed = (state_fixed / 0.1).astype(np.int8)
+        state_moving = (state_moving / 0.1).astype(np.int8)
+        MI=mr.normalized_mutual_info_score(np.reshape(state_fixed,[-1]),np.reshape(state_moving,[-1]))
+        #print(time.clock()-s)
+        return MI
+    def _calc_reward(self, state_now,state_next):
         """ calculate the reward based on the decrease in MI to the end point
         Arguments:
             curr_location {[type]} -- [description]
             next_location {[type]} -- [description]
         """
-        MI_curr = self._calc_mutualInformation(curr_location,curr_ang)
-        MI_next = self._calc_mutualInformation(next_location,next_ang)
-        dMI=(MI_next-MI_curr)*10
+        MI_curr = self._calc_mutualInformation(state_now)
+        MI_next = self._calc_mutualInformation(state_next)
+        dMI=(MI_next-MI_curr)*100
         return dMI
-    def _get_state_current(self):
+    #def _calc_innerface(self,state):
+
+    def _get_state_current(self,loc,ang):
         """ crop image data around current location to obtain what network sees
         """
         # initialization
 
-        current_angle=self.angle
+        current_angle=ang
 
         half_size_l = np.array(self._shape_image_moving, dtype="int") // 2
         half_size_r = np.array(self._shape_image_moving, dtype="int") - half_size_l
 
-        bbox_l_tmp = self.location - half_size_l
-        bbox_r_tmp = self.location + half_size_r
+        bbox_l_tmp = loc - half_size_l
+        bbox_r_tmp = loc + half_size_r
 
         # check if they violate image boundary and fix them
         bbox_l = np.max((bbox_l_tmp, np.array([0, 0, 0])), axis=0)

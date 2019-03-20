@@ -47,7 +47,7 @@ class DataLoader(object):
         if self._phase == "train":
             self._indexs = self._indexs
         elif self._phase == "eval":
-            self._indexs = self._indexs
+            self._indexs = self._indexs[:3]
         
     def __len__(self):
         return len(self._indexs)

@@ -10,7 +10,7 @@ from sklearn import metrics as mr
 from gym import spaces
 from collections import Counter, deque, namedtuple
 
-from DataLoader import DataLoader
+from DataLoader2 import DataLoader
 
 Info = namedtuple("Info",
                         ["dist_error", "steps"])
@@ -45,18 +45,18 @@ class MedEnv(gym.Env):
         #initial angle
         self.angle=0
         # 3D or ...
-        self._ndims = 2*len(self._shape_obser)
+        self._ndims = len(self._shape_obser)
         # history buffer for storing last locations to check oscilations
         self._step_history_len = step_history_len
         self._reset_history()
         # actions, only translation
         self._action_trans = np.concatenate((np.eye(self._ndims), -1 * np.eye(self._ndims)), axis=0).astype("int")
-        self._action_trans=self._action_trans[np.array([0,1,2,6,7,8]),:]
+        #self._action_trans=self._action_trans[np.array([0,1,2,6,7,8]),:]
         #(dx,dy,dz,dangle1,dangle2,dangle3)
         # data loader
         self._data_loader = DataLoader(phase=self._phase, base_folder=self._base_folder)
         self._data_sampler = self._data_loader.sample_circular(shuffle=self._phase!="play")
-
+        self.mem_pic=np.zeros([100,3])
         # self.action_space = spaces.Discrete(self._num_actions)
         # self.observation_space = spaces.Box(low=-10, high=10, shape=self._shape_obser)
 
@@ -80,7 +80,7 @@ class MedEnv(gym.Env):
         curr_angle=self.angle
 
         next_location = curr_location + self._action_trans[action][:3]
-        next_angle=curr_angle+self._action_trans[action][3:]
+        next_angle=curr_angle#+self._action_trans[action][3:]
         if np.any(next_location < np.array([0, 0, 0])) or np.any(next_location >= np.array(self.fixed.shape)):
             next_location = curr_location
             go_out = True
@@ -90,16 +90,16 @@ class MedEnv(gym.Env):
         if go_out:
             reward = -1
         else:
-            reward = np.clip(self._calc_reward(self.state,next_state), -1, 1)#8s
+            reward = np.clip(self._calc_reward(self.state,next_state,curr_location,next_location), -1, 1)#8s
 
         # update
         self.location = next_location
         self.angle=next_angle
         self.state = self._get_state_current(self.location,self.angle)#1s
-        self._dist_current = self._calc_mutualInformation(self.state)
+        self._dist_current = self._calc_mutualInformation(self.state, self.location)
 
         # terminate if the agent reached the last point
-        if self._phase == "train" and self._dist_current >= 0.23:##TODO: maybe the parameter 0.5 need to be changed
+        if self._phase == "train" and self._dist_current >= 0.25:##TODO:
             self._isOver = True
 
         # terminate if maximum number of steps is reached
@@ -114,12 +114,13 @@ class MedEnv(gym.Env):
         if self._phase != "train" and self._oscillate and self._dist_current >= 0.2:
             self._isOver = True
             self.location = self._get_location_best()
-            self.angle=self._get_angle_best()
+            #self.angle=self._get_angle_best()
             self.state = self._get_state_current(self.location,self.angle)
 
         # update distance between fixed and moving
 
         self.offset = self.location - self._shape_image_fixed // 2
+        self.mem_pic[self._cnt,:]=self.offset
         #print(time.time()-a)
         return self.state, reward, self._isOver, Info(self._dist_current, self._cnt)
 
@@ -131,7 +132,12 @@ class MedEnv(gym.Env):
         self._isOver = False
         self._cnt = 0
         self._reset_history()##
-
+        if np.sum(self.mem_pic)>0:
+            f=open('/home/data2/pan_cancer/txt/'+self.fixed.name.split('/')[-1].split('.')[0]+'.txt','w')
+            for id in range(100):
+                f.writelines(str(self.mem_pic[id,:]))
+            f.close()
+        self.mem_pic = np.zeros([200, 3])
         # init a fixed and a moving volumn
         self.fixed, self.moving = next(self._data_sampler)
         # image volume size
@@ -144,52 +150,43 @@ class MedEnv(gym.Env):
         #self.location = np.array([np.random.randint(x - 15, x + 15, dtype = "int") for x in self.moving.end_point])
         self.state = self._get_state_current(self.location,self.angle)#1s
         self.offset=self.location-self._shape_image_fixed//2
-        self._dist_current = self._calc_mutualInformation(self.state)#4s
-
+        self._dist_current = self._calc_mutualInformation(self.state,self.location)#4s
+        #self.mem_pic[100+self.offset[0],100+self.offset[1],50+self.offset[2]]=self._cnt+1
         return self.state
     def _calc_now_MI(self):
-        return self._calc_mutualInformation(self.state)
-    def _calc_mutualInformation(self,loc,ang):#ang has no been used
+        return self._calc_mutualInformation(self.state,self.location)
+
+    def _calc_mutualInformation(self,state,loc):#ang has no been used
         half_size_l = np.array(self._shape_image_moving, dtype="int") // 2
         half_size_r = np.array(self._shape_image_moving, dtype="int") - half_size_l
-
         bbox_l_tmp = loc - half_size_l
         bbox_r_tmp = loc + half_size_r
-
-        # check if they violate image boundary and fix them
         bbox_l = np.max((bbox_l_tmp, np.array([0, 0, 0])), axis=0)
         bbox_r = np.min((bbox_r_tmp, np.array(self._shape_image_fixed)), axis=0)
         area=bbox_r-bbox_l
         area=area[0]*area[1]*area[2]/(self._shape_image_moving[0]*self._shape_image_moving[1]*self._shape_image_moving[2])
-        state_fixed=self.fixed.data[bbox_l[0]:bbox_r[0], bbox_l[1]:bbox_r[1], bbox_l[2]:bbox_r[2]]
-        moving_l = np.max([bbox_l - loc+self._shape_image_moving//2, np.array([0, 0, 0])], axis=0)
-        moving_r = np.max([bbox_r - loc+self._shape_image_moving//2, self._shape_image_moving//2- loc+self._shape_image_fixed], axis=0)
-        state_moving = self.moving.data[moving_l[0]:moving_r[0], moving_l[1]:moving_r[1], moving_l[2]:moving_r[2]]
-        #s=time.clock()
-        state_fixed = (state_fixed / 0.1).astype(np.int8)
-        state_moving = (state_moving / 0.1).astype(np.int8)
-        MI=mr.normalized_mutual_info_score(np.reshape(state_fixed,[-1]),np.reshape(state_moving,[-1]))
-        #print(time.clock()-s)
-        return MI
-    def _calc_mutualInformation(self,state):#ang has no been used
-
         state_moving = state[1,:,:,:]
         state_fixed=state[0,:,:,:]
+        mask_f=state_fixed>0
+        mask_m = state_moving > 0
+        dice=(2*np.sum(mask_f*mask_m)+0.001)/(np.sum(mask_f)+np.sum(mask_m)+0.001)
         #s=time.clock()
         state_fixed = (state_fixed / 0.1).astype(np.int8)
         state_moving = (state_moving / 0.1).astype(np.int8)
+        state_moving=state_moving[mask_f]
+        state_fixed=state_fixed[mask_f]
         MI=mr.normalized_mutual_info_score(np.reshape(state_fixed,[-1]),np.reshape(state_moving,[-1]))
         #print(time.clock()-s)
-        return MI
-    def _calc_reward(self, state_now,state_next):
+        return MI*2+dice/10
+    def _calc_reward(self, state_now,state_next,locn,loce):
         """ calculate the reward based on the decrease in MI to the end point
         Arguments:
             curr_location {[type]} -- [description]
             next_location {[type]} -- [description]
         """
-        MI_curr = self._calc_mutualInformation(state_now)
-        MI_next = self._calc_mutualInformation(state_next)
-        dMI=(MI_next-MI_curr)*100
+        MI_curr = self._calc_mutualInformation(state_now,locn)
+        MI_next = self._calc_mutualInformation(state_next,loce)
+        dMI=(MI_next-MI_curr)*1000
         return dMI
     #def _calc_innerface(self,state):
 
@@ -232,7 +229,7 @@ class MedEnv(gym.Env):
         """
         # update location history
         self._loc_history[:-1] = self._loc_history[1:]
-        self._loc_history[-1] = np.concatenate([self.location,self.angle],0)
+        self._loc_history[-1] = np.concatenate([self.location],0)
 
         # update Q-value history
         self._qvalue_history[:-1] = self._qvalue_history[1:]
@@ -249,7 +246,7 @@ class MedEnv(gym.Env):
         """
         unique, counts = np.unique(self._loc_history, axis=0, return_counts=True)
         counts_sort = counts.argsort()
-        if np.all(unique[counts_sort[-1]] == [0, 0, 0,0,0,0]):
+        if np.all(unique[counts_sort[-1]] == [0, 0, 0]):
             if counts[counts_sort[-2]] > 3:
                 return True
             else:

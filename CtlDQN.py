@@ -77,7 +77,7 @@ class CtlDQN(MedAgent):
         self.load_chkpoint()
 
         self.before_train(self._env)
-        self.update_config_per_epoch()
+        self.update_config_per_epoch(0)
         while self._cnt_epoch < self._max_epoch:
             while self._cnt_frame < len(self._env._data_loader):
                 # interact
@@ -95,7 +95,7 @@ class CtlDQN(MedAgent):
                 #    self.update_target_network()
                 #print(self._env.location,self._env.angle)
             self.save_chkpoint()
-            self.update_config_per_epoch()
+            self.update_config_per_epoch(1)
 
             # evaluation
             if self._cnt_epoch % self._epochs_per_eval == 0:

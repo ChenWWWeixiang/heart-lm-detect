@@ -125,14 +125,15 @@ class MedAgent(object):
             self._cnt_frame += 1
             self._frame_done = False
 
-    def update_config_per_epoch(self):
+    def update_config_per_epoch(self,x):
         # update counters
         self._buff_iter = self._cnt_iter + 1
         self._cnt_frame = 0
-        self._cnt_epoch += 1
+        if x==1:
+            self._cnt_epoch += 1
         # update epsilon
-        turn_epoch_0 = 8
-        turn_value_0 = 0.1
+        turn_epoch_0 = 10
+        turn_value_0 = 0.2
         turn_epoch_1 = 320
         turn_value_1 = 0.01
         if self._cnt_epoch <= turn_epoch_0:
@@ -141,7 +142,7 @@ class MedAgent(object):
             self._epsilon = (turn_value_1 - turn_value_0) * (self._cnt_epoch - turn_epoch_0) / (turn_epoch_1 - turn_epoch_0) + turn_value_0
 
     def interact(self):
-        return self._take_n_steps(10)
+        return self._take_n_steps(5)
 
     def _take_one_step(self):
         return self._populate_exp()
@@ -172,15 +173,15 @@ class MedAgent(object):
             last_state.append(curr_state)
 
             action, qvalue = self._action(last_state)
-
+        #old=self._env.offset
         self._env_state, reward, isOver, _ = self._env.step(action, qvalue)
-
+        #new=self._env.offset
         if isOver:
             self._env_state = self._env.reset()
             self._frame_done = True
         
         self._memory.append(Experience(curr_state, action, reward, isOver))
-        print('Locoffset:{} MI:{}'.format(self._env.offset,self._env._calc_now_MI()))
+        print('Locoffset:{} MI:{} action and Q:{}-{}'.format(self._env.offset,self._env._calc_now_MI(),qvalue,action))
 
     def _action(self, state):
         state_var = to_tensor_var(state, use_cuda=self._use_cuda)

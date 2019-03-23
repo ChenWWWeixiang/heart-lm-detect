@@ -42,16 +42,16 @@ EPOCHS_PER_EVAL = 1
 RANDOM_SEED = 2019
 
 # the directory containing data
-BASE_PREFIX = "/home/data2/pan_cancer/"
+BASE_PREFIX = "/home/data2/pan_cancer/0321output/"
 ###############################################################################
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--gpu", help="comma separated list of GPU(s) to use", default="3")
+    parser.add_argument("--gpu", help="comma separated list of GPU(s) to use", default="1")
     parser.add_argument("--method", help="comma separated list of type of DQN to use", default="Double")
     parser.add_argument("--phase", help="task to perform", choices=["train", "eval", "play"], default="train")
-    parser.add_argument("--logdir", help="store logs in this directory during training", default="0319_double")
+    parser.add_argument("--logdir", help="store logs in this directory during training", default="0322_niigo")
     parser.add_argument("--name", help="name of current experiment for logs", default="DQN")
 
     args = parser.parse_args()

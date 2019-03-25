@@ -79,7 +79,7 @@ class CtlDQN(MedAgent):
         self.before_train(self._env)
         self.update_config_per_epoch(0)
         while self._cnt_epoch < self._max_epoch:
-            while self._cnt_frame < len(self._env._data_loader):
+            while self._cnt_frame < len(self._env._data_loader) and True:
                 # interact
                 #t1=time.time()
                 self.interact()#2.6s
@@ -111,22 +111,30 @@ class CtlDQN(MedAgent):
                 print("*"*50)
 
     def play(self):
-        for i in range(len(self._env_eval.env._data_loader)):
-            state = self._env_eval.reset()
-            print(self._env_eval.env.moving.name.split('/')[-1]+' is coming!')
-            print('from '+str(self._env_eval.env.location)+' and initial MI is '+str(self._env_eval.env._calc_now_MI()))
+        frames = deque(maxlen=self._num_obsers)
+        f = open('results.txt', 'w')
+        for i in range(len(self._env._data_loader)):
+            state = self._env.reset()
+            for _ in range(self._num_obsers - 1):
+                frames.append(np.zeros_like(state))
+            frames.append(state)
+            print(self._env.moving.name.split('/')[-1]+' is coming!')
+            print('from '+str(self._env.offset)+' and initial MI is '+str(self._env._calc_now_MI()))
             isOver = False
             cnt=0
             while not isOver:
-                action, qvalue = self._action(state)
-                state, reward, isOver, info = self._env_eval.step(action, qvalue)
-                print('step'+str(cnt)+' Q:'+str(qvalue)+' action:'+str(action)+' loc:'+str(self._env_eval.env.location)+'  MI: '+str(self._env_eval.env._calc_now_MI())+ '  reward: '+str(reward))
+                action, qvalue = self._action(frames)
+                state, reward, isOver, info = self._env.step(action, qvalue)
+                frames.append(state)
+                print('step'+str(cnt)+' Q:'+str(qvalue)+' action:'+str(action)+' loc:'+str(self._env.offset)+'  MI: '+str(self._env._calc_now_MI())+ '  reward: '+str(reward))
                 cnt+=1
+            f.writelines('name: '+self._env.moving.name+' loc:'+str(self._env.offset)+'  MI: '+str(self._env._calc_now_MI())+ '  reward: '+str(reward))
 
     def evaluate(self):
         rewards = []
         infos = []
         locs=[]
+
         for i in range(len(self._env_eval.env._data_loader)):
             rewards_i = []
             infos_i = []
@@ -139,8 +147,9 @@ class CtlDQN(MedAgent):
                 infos_i.append(info)
             rewards.append(rewards_i)
             infos.append(infos_i)
-            locs.append(self._env_eval.get_loc())
-            ##TODO:print name and loc to mem
+            locs.append(self._env_eval.env.offset)
+
+
         return rewards, infos,locs
 
     def save_chkpoint(self):

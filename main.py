@@ -27,13 +27,13 @@ NUM_ACTIONS = 6# 12 using 9 for debug
 # discount factor - nature (0.99) - medical (0.9)
 REWARD_GAMMA = 0.9
 # replay memory size - nature (1e6) - medical (1e5 view-patches) debug 1e4
-MAX_MEMORY_SIZE = 5e4
+MAX_MEMORY_SIZE = 1e5
 # initialization of memory buffer
 INIT_MEMORY_SIZE = MAX_MEMORY_SIZE // 500  # 200
 # max epochs
 MAX_EPOCH = 100
 # the frequency of updating the target network
-ITERS_PER_UPDATE = 2500 # 2.5k
+ITERS_PER_UPDATE = 1000 # 2.5k
 # maximum number of steps per frame
 MAX_NUM_STEPS = 100
 # num training epochs in between model evaluations
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     parser.add_argument("--gpu", help="comma separated list of GPU(s) to use", default="1")
     parser.add_argument("--method", help="comma separated list of type of DQN to use", default="Double")
     parser.add_argument("--phase", help="task to perform", choices=["train", "eval", "play"], default="train")
-    parser.add_argument("--logdir", help="store logs in this directory during training", default="0322_niigo")
+    parser.add_argument("--logdir", help="store logs in this directory during training", default="0324_niigo")
     parser.add_argument("--name", help="name of current experiment for logs", default="DQN")
 
     args = parser.parse_args()

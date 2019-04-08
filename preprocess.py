@@ -1,7 +1,7 @@
 import SimpleITK as sitk
 import numpy as np
 import glob
-import os
+import os,cv2
 import xlrd
 import threading
 
@@ -73,7 +73,7 @@ def get_boxes(box_dir):
 
 #T1_files = glob.glob('/home/data2/pan_cancer/T1/*.mha')#moved--T1
 data_path='/home/data2/pan_cancer/0321/'
-
+jpg_output='/home/data2/pan_cancer/0321_jpg/'
 #T2_files = glob.glob('/home/data2/pan_cancer/T2/*.mha')#fixed--T2
 boxdata_path='/home/data2/pan_cancer/datalabel.xlsx'
 box_dict=get_boxes(boxdata_path)
@@ -84,6 +84,34 @@ all_keys=list(box_dict.keys())
 for key in all_keys:
 
     p_data=box_dict[key]
+    tmp=p_data[0]['box']
+    if tmp[2]>tmp[-1]:
+        t=tmp[2]
+        tmp[2]=tmp[-1]
+        tmp[-1]=t
+    if tmp[1]>tmp[-2]:
+        t=tmp[1]
+        tmp[1]=tmp[-2]
+        tmp[-2]=t
+    if tmp[0]>tmp[-3]:
+        t=tmp[0]
+        tmp[0]=tmp[-3]
+        tmp[-3]=t
+    p_data[0]['box']=tmp
+    tmp=p_data[1]['box']
+    if tmp[2]>tmp[-1]:
+        t=tmp[2]
+        tmp[2]=tmp[-1]
+        tmp[-1]=t
+    if tmp[1]>tmp[-2]:
+        t=tmp[1]
+        tmp[1]=tmp[-2]
+        tmp[-2]=t
+    if tmp[0]>tmp[-3]:
+        t=tmp[0]
+        tmp[0]=tmp[-3]
+        tmp[-3]=t
+    p_data[1]['box']=tmp
     T1_files=[]
     box1=[]
     box2=[]
@@ -91,18 +119,32 @@ for key in all_keys:
     for line in p_data:
         if line['type']=='T1' and os.path.exists(data_path+line['name']):
             T1_files.append(data_path+line['name'])
-            box1.append(line['box'])
+            box1.append(line['box'].astype(np.int))
         if line['type']=='T2' and os.path.exists(data_path+line['name']):
             T2_files.append(data_path+line['name'])
-            box2.append(line['box'])
+            box2.append(line['box'].astype(np.int))
     T1num=len(T1_files)
     T2num = len(T2_files)
     for i in range(T1num):
         for j in range(T2num):
             fixed_image = sitk.ReadImage(T1_files[i], sitk.sitkFloat32)  ##
             moving_image = sitk.ReadImage(T2_files[j], sitk.sitkFloat32)
-
+            fixed_image_np=sitk.GetArrayFromImage(fixed_image)
+            moving_image_np = sitk.GetArrayFromImage(moving_image)
+            for z in range(box1[i][2],box1[i][-1]):
+                img=fixed_image_np[z,:,:]
+                img = img*1.0 / img.max()*255
+                img=np.stack([img,img,img],-1)
+                cv2.rectangle(img,(box1[i][0],box1[i][1]),(box1[i][3],box1[i][4]),(0,255,255),4)
+                cv2.imwrite(jpg_output+T1_files[i].split('/')[-2].split('.')[0]+'_'+str(z)+'T1.jpg',img)
+            for z in range(box2[i][2], box2[i][-1]):
+                img = moving_image_np[z, :, :]
+                img=img*1.0/img.max()*255
+                img = np.stack([img, img, img], -1)
+                cv2.rectangle(img, (box2[i][0], box2[i][1]), (box2[i][3], box2[i][4]), (0, 255, 0), 4)
+                cv2.imwrite(jpg_output + T1_files[i].split('/')[-2].split('.')[0] + '_' + str(z) + 'T2.jpg', img)
             print(T1_files[i])
+            continue
             initial_transform = sitk.CenteredTransformInitializer(fixed_image,
                                                                   moving_image,
                                                                   sitk.Euler3DTransform(),

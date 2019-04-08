@@ -31,13 +31,13 @@ MAX_MEMORY_SIZE = 1e5
 # initialization of memory buffer
 INIT_MEMORY_SIZE = MAX_MEMORY_SIZE // 500  # 200
 # max epochs
-MAX_EPOCH = 100
+MAX_EPOCH = 500
 # the frequency of updating the target network
-ITERS_PER_UPDATE = 1000 # 2.5k
+ITERS_PER_UPDATE = 2000 # 2.5k
 # maximum number of steps per frame
-MAX_NUM_STEPS = 100
+MAX_NUM_STEPS = 40
 # num training epochs in between model evaluations
-EPOCHS_PER_EVAL = 1
+EPOCHS_PER_EVAL = 10
 # random seed
 RANDOM_SEED = 2019
 
@@ -48,10 +48,10 @@ BASE_PREFIX = "/home/data2/pan_cancer/0321output/"
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--gpu", help="comma separated list of GPU(s) to use", default="1")
+    parser.add_argument("--gpu", help="comma separated list of GPU(s) to use", default="0")
     parser.add_argument("--method", help="comma separated list of type of DQN to use", default="Double")
-    parser.add_argument("--phase", help="task to perform", choices=["train", "eval", "play"], default="train")
-    parser.add_argument("--logdir", help="store logs in this directory during training", default="0324_niigo")
+    parser.add_argument("--phase", help="task to perform", choices=["train", "eval", "play"], default="play")
+    parser.add_argument("--logdir", help="store logs in this directory during training", default="0403_dpn_super")
     parser.add_argument("--name", help="name of current experiment for logs", default="DQN")
 
     args = parser.parse_args()

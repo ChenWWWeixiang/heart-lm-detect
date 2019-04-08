@@ -44,6 +44,7 @@ class MedEnv(gym.Env):
         self._cnt = 0
         #initial angle
         self.angle=0
+
         # 3D or ...
         self._ndims = len(self._shape_obser)
         # history buffer for storing last locations to check oscilations
@@ -75,34 +76,35 @@ class MedEnv(gym.Env):
         go_out = False
         self._qvalue = qvalue
         self._isOver = False
-
+        self.offset = self.location - self._shape_image_fixed // 2
         curr_location = self.location
         curr_angle=self.angle
 
         next_location = curr_location + self._action_trans[action][:3]
+        next_offset=next_location-self._shape_image_fixed // 2
         next_angle=curr_angle#+self._action_trans[action][3:]
         if np.any(next_location < np.array([0, 0, 0])) or np.any(next_location >= np.array(self.fixed.shape)):
             next_location = curr_location
             go_out = True
-        next_state=self._get_state_current(next_location,next_angle)
+        #next_state=self._get_state_current(next_location,next_angle)
         # punish -1 reward if the agent tries to go out
 
         if go_out:
-            reward = -2
-            rd=0
+            reward = -1
+
         else:
-            reward,rd = np.clip(self._calc_reward(self.state,next_state,curr_location,next_location), -1, 1)#8s
+            reward,dd = np.clip(self._calc_reward(self.offset,next_offset), -1, 1)#8s
 
 
         # update
         self.location = next_location
         self.angle=next_angle
         self.state = self._get_state_current(self.location,self.angle)#1s
-        self._dist_current,current_dice = self._calc_mutualInformation(self.state, self.location)
-        if rd>0.2 and current_dice<0.5:
-            reward=-1
+        self.offset = self.location - self._shape_image_fixed // 2
+        self._dist_current = self._calc_dis(self.offset)
+
         # terminate if the agent reached the last point
-        if self._phase == "train" and self._dist_current >= 0.25:##TODO:
+        if self._phase == "train" and self._dist_current <= 0.1:##TODO:
             self._isOver = True
 
         # terminate if maximum number of steps is reached
@@ -122,12 +124,11 @@ class MedEnv(gym.Env):
 
         # update distance between fixed and moving
 
-        self.offset = self.location - self._shape_image_fixed // 2
         self.mem_pic[self._cnt,:]=self.offset
         #print(time.time()-a)
         return self.state, reward, self._isOver, Info(self._dist_current, self._cnt)
 
-    def reset(self):#5s
+    def reset(self,same=False):#5s
         """ reset state and anything related
         Returns:
             [type] -- [description]
@@ -142,7 +143,8 @@ class MedEnv(gym.Env):
             f.close()
         self.mem_pic = np.zeros([200, 3])
         # init a fixed and a moving volumn
-        self.fixed, self.moving = next(self._data_sampler)
+        if not same:
+            self.fixed, self.moving = next(self._data_sampler)
         # image volume size
         self._shape_image_fixed = self.fixed.shape
         self._shape_image_moving = self.moving.shape
@@ -155,12 +157,19 @@ class MedEnv(gym.Env):
         #self.location = np.array([np.random.randint(x - 15, x + 15, dtype = "int") for x in self.moving.end_point])
         self.state = self._get_state_current(self.location,self.angle)#1s
         self.offset=self.location-self._shape_image_fixed//2
-        self._dist_current,_ = self._calc_mutualInformation(self.state,self.location)#4s
+        self.spacing=self.moving.spacing
+        self._dist_current= self._calc_dis(self.offset)#4s
+
         #self.mem_pic[100+self.offset[0],100+self.offset[1],50+self.offset[2]]=self._cnt+1
         return self.state
     def _calc_now_MI(self):
-        a,b=self._calc_mutualInformation(self.state,self.location)
+        a=self._dist_current
         return a
+    def _calc_dis(self,offset):#ang has no been used
+        gt=self.moving.inital
+        delta=np.linalg.norm((gt - offset) * self.spacing)
+        #print(time.clock()-s)
+        return delta
 
     def _calc_mutualInformation(self,state,loc):#ang has no been used
         half_size_l = np.array(self._shape_image_moving, dtype="int") // 2
@@ -183,17 +192,24 @@ class MedEnv(gym.Env):
         state_fixed=state_fixed[mask_f]
         MI=mr.normalized_mutual_info_score(np.reshape(state_fixed,[-1]),np.reshape(state_moving,[-1]))
         #print(time.clock()-s)
-        return MI*2+dice/10,dice
-    def _calc_reward(self, state_now,state_next,locn,loce):
+        return MI*2+dice/5,dice
+    def _calc_reward(self, locn,loce):
         """ calculate the reward based on the decrease in MI to the end point
         Arguments:
             curr_location {[type]} -- [description]
             next_location {[type]} -- [description]
         """
-        MI_curr,a = self._calc_mutualInformation(state_now,locn)
-        MI_next,b = self._calc_mutualInformation(state_next,loce)
-        dMI=(MI_next-MI_curr)*1000
-        return dMI,b-a
+        dis_curr=self._calc_dis(locn)
+        dis_next = self._calc_dis(loce)
+        #MI_curr,a = self._calc_mutualInformation(state_now,locn)
+        #MI_next,b = self._calc_mutualInformation(state_next,loce)
+        #dMI=(MI_next-MI_curr)*1000
+        dd=(dis_curr-dis_next)
+        if dd >0:
+            return 1,1
+        else:
+            return -1,-1
+
     #def _calc_innerface(self,state):
 
     def _get_state_current(self,loc,ang):

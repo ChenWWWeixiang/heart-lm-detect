@@ -30,32 +30,19 @@ class DataLoader(object):
     def __init__(self, phase="play", base_folder=None):
         super(DataLoader, self).__init__()
         # phase
-        self.gtbox_path='/home/data1/registration/results.txt'
+        self.gtbox_path='/home/data2/pan_cancer/all_results.txt'
         f=open(self.gtbox_path)
         all=f.readlines()
 
         self.name=[a.split(' ')[0] for a in all]
-        gt = [a.split(' ')[2:] for a in all]
-        self.GG=[]
-        for igt in gt:
-            x=int(igt[0])
-            if igt[1] == '':
-                igt=igt[2:]
-            else:
-                igt=igt[1:]
-            if igt[0] == '':
-                igt=igt[1:]
-
-            y=int(igt[0])
-            if igt[1]=='':
-                igt = igt[2:]
-            else:
-                igt = igt[1:]
-            if igt[0] == '':
-                igt=igt[1:]
-
-            z=int(igt[0])
-            self.GG.append([x,y,z])
+        if True:
+            gt = [a.split(' ')[1:] for a in all]
+            self.GG=[]
+            for igt in gt:
+                x = int(igt[0])
+                y = int(igt[1])
+                z = int(igt[2])
+                self.GG.append([x,y,z])
         self._phase = phase
         # folder containing images
         self._base_folder = base_folder
@@ -139,9 +126,9 @@ class DataLoader(object):
         moving.origin = np.array(image_sitk.GetOrigin())
         moving.spacing = np.array(image_sitk.GetSpacing())
 
-        #xid=self.name.index(self.T2_list[idx].split('/')[-1])
-        #GT=self.GG[xid]
-        moving.inital=[0,0,0]
+        xid=self.name.index(self.T2_list[idx].split('/')[-1].split('T')[0])
+        GT=self.GG[xid]
+        moving.inital=GT
         return fixed, moving
 
     def _load_txt(self, txt_name):

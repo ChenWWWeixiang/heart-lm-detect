@@ -111,25 +111,89 @@ class CtlDQN(MedAgent):
                 print("*"*50)
 
     def play(self):
+        tic=time.time()
+        Di=[]
+        self.load_chkpoint()
+        re_go=1
+        self.labeltxt='/home/data2/pan_cancer/all_results.txt'
+        self.boxtxt='/home/data2/pan_cancer/labels.txt'
+        f=open(self.labeltxt)
+        f2=open(self.boxtxt)
+        alldata2 = f2.readlines()
+        name2 = [line.split(' ')[0] for line in alldata2]
+        boxes = [line.split(' ')[0:] for line in alldata2]
+        alldata=f.readlines()
+        name=[line.split(' ')[0] for line in alldata]
+        t = [line.split(' ')[1:4] for line in alldata]
         frames = deque(maxlen=self._num_obsers)
         f = open('results.txt', 'w')
         for i in range(len(self._env._data_loader)):
-            state = self._env.reset()
-            for _ in range(self._num_obsers - 1):
-                frames.append(np.zeros_like(state))
-            frames.append(state)
-            print(self._env.moving.name.split('/')[-1]+' is coming!')
-            print('from '+str(self._env.offset)+' and initial MI is '+str(self._env._calc_now_MI()))
-            isOver = False
-            cnt=0
-            while not isOver:
-                action, qvalue = self._action(frames)
-                state, reward, isOver, info = self._env.step(action, qvalue)
+            Tt=[]
+            for iter in range(re_go):
+                if iter==0:
+                    state = self._env.reset(False)
+                else:
+                    state = self._env.reset(True)
+                for _ in range(self._num_obsers - 1):
+                    frames.append(np.zeros_like(state))
                 frames.append(state)
-                print('step'+str(cnt)+' Q:'+str(qvalue)+' action:'+str(action)+' loc:'+str(self._env.offset)+'  MI: '+str(self._env._calc_now_MI())+ '  reward: '+str(reward))
-                cnt+=1
-            f.writelines('name: '+self._env.moving.name+' loc:'+str(self._env.offset)+'  MI: '+str(self._env._calc_now_MI())+ '  reward: '+str(reward))
+                print(self._env.moving.name.split('/')[-1]+' is coming!')
+                matchname=self._env.moving.name.split('/')[-1].split('T2')[0]
+                idx=name.index(matchname)
+                idx2 = name2.index(matchname)
+                B=boxes[idx2]
+                T=t[idx]
+                T=[int(i) for i in T]
+                B = [int(i) for i in B[1:-2]]
+                print('from '+str(self._env.offset)+' and initial Dis is '+str(self._env._calc_now_MI())+' target-->' +str(T))
+                isOver = False
+                cnt=0
+                while not isOver:
+                    action, qvalue = self._action(frames)
+                    state, reward, isOver, info = self._env.step(action, qvalue)
+                    frames.append(state)
+                    print('step'+str(cnt)+' Q:'+str(qvalue)+' action:'+str(action)+' loc:'+str(self._env.offset)+'  Dis: '+str(self._env._calc_now_MI())+ '  reward: '+str(reward))
+                    cnt+=1
+                Tt.append(self._env.offset)
+                print('name: '+self._env.moving.name+' loc:'+str(self._env.offset)+'  gtT:'+str(T)+'\n')
+                f.writelines('name: '+self._env.moving.name+' loc:'+str(self._env.offset)+'  gtT:'+str(T)+'\n')
+            T1box = B[:6]
+            Tt=np.mean(Tt,0)
+            Tt=np.concatenate([Tt,Tt])
 
+            T2box = np.array(B[6:])+Tt*2
+            dice=self.Dice3d(T2box,T1box)
+            Di.append(dice)
+
+        dice_av=np.mean(Di)
+        acc=np.mean(np.array(Di)>0.5)
+        print(dice_av,acc)
+        print(time.time()-tic)
+
+
+
+
+    def Dice3d(self,dets, gt_box):
+        x = [dets[0], dets[3], gt_box[0], gt_box[3]]
+        x.remove(np.max(x))
+        x.remove(np.min(x))
+        y = [dets[1], dets[4], gt_box[1], gt_box[4]]
+        y.remove(np.max(y))
+        y.remove(np.min(y))
+        z = [dets[2], dets[5], gt_box[2], gt_box[5]]
+        z.remove(np.max(z))
+        z.remove(np.min(z))
+        dice = 2 * (np.abs(x[0] - x[1]) * np.abs(y[0] - y[1]) * np.abs(z[0] - z[1])) / \
+               (np.abs(dets[0] - dets[3]) * np.abs(dets[1] - dets[4]) * np.abs(dets[2] - dets[5]) +
+                np.abs(gt_box[0] - gt_box[3]) * np.abs(gt_box[1] - gt_box[4]) * np.abs(gt_box[2] - gt_box[5]))
+        if max(gt_box[0], gt_box[3]) < min(dets[0], dets[3]) or min(
+                gt_box[0], gt_box[3]) > max(dets[0], dets[3]) or min(
+            gt_box[1], gt_box[4]) > max(dets[1], dets[4]) or max(
+            gt_box[1], gt_box[4]) < min(dets[1], dets[4]) or min(
+            gt_box[2], gt_box[5]) > max(dets[2], dets[5]) or max(
+            gt_box[2], gt_box[5]) < min(dets[2], dets[5]):
+            dice = 0
+        return dice
     def evaluate(self):
         rewards = []
         infos = []

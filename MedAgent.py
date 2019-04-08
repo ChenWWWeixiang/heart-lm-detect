@@ -47,7 +47,7 @@ class MedAgent(object):
         self._buff_iter = 0
         self._cnt_iter = 0
         self._cnt_frame = 0
-        self._cnt_epoch = 0
+        self._cnt_epoch = 1
         self._epsilon = 1.0
         self._frame_done = False
         self._memory = ReplayMemory(self._max_memory_size, self._shape_obser, self._num_obsers)
@@ -132,7 +132,7 @@ class MedAgent(object):
         if x==1:
             self._cnt_epoch += 1
         # update epsilon
-        turn_epoch_0 = 10
+        turn_epoch_0 = 20
         turn_value_0 = 0.2
         turn_epoch_1 = 320
         turn_value_1 = 0.01
@@ -142,7 +142,7 @@ class MedAgent(object):
             self._epsilon = (turn_value_1 - turn_value_0) * (self._cnt_epoch - turn_epoch_0) / (turn_epoch_1 - turn_epoch_0) + turn_value_0
 
     def interact(self):
-        return self._take_n_steps(5)
+        return self._take_n_steps(30)
 
     def _take_one_step(self):
         return self._populate_exp()
@@ -181,7 +181,7 @@ class MedAgent(object):
             self._frame_done = True
         
         self._memory.append(Experience(curr_state, action, reward, isOver))
-        print('Locoffset:{} MI:{} action and Q:{}-{}'.format(self._env.offset,self._env._calc_now_MI(),qvalue,action))
+        print('Locoffset:{} MI:{} action {} and Q:{} GT is {}'.format(self._env.offset,self._env._calc_now_MI(),action,qvalue,self._env.moving.inital))
 
     def _action(self, state):
         state_var = to_tensor_var(state, use_cuda=self._use_cuda)

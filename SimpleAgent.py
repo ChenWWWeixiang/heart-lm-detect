@@ -107,7 +107,7 @@ class SimpleAgent(object):
         self._actor_optim.step()
 
         print(
-            "Simple Epoch: [{:<4d}] Iter: [{:<4d}] Env: [{:d}-{:<3d}] Speed: {:.2f}/sec Loss: {:.4f} Epsilon: {:.2f} Loc:{} MI:{}".format(
+            "Simple Epoch: [{:<4d}] Iter: [{:<4d}] Env: [{:d}-{:<3d}] Speed: {:.2f}/sec Loss: {:.4f} Epsilon: {:.2f} Loc:{} Dis:{}".format(
                 self._cnt_epoch, self._cnt_iter - self._buff_iter, self._cnt_frame, self._env.get_cnt(),
                 self._batch_size / (time.time() - start_time), loss.item(), self._epsilon, self._env.location,self._env._calc_now_MI()))
 
@@ -117,12 +117,14 @@ class SimpleAgent(object):
             self._cnt_frame += 1
             self._frame_done = False
 
-    def update_config_per_epoch(self):
+    def update_config_per_epoch(self,keep=False):
         # update counters
         self._buff_iter = self._cnt_iter + 1
         self._cnt_frame = 0
-        self._cnt_epoch += 1
+
         # update epsilon
+        if keep==1:
+            self._cnt_epoch += 1
         turn_epoch_0 = 8
         turn_value_0 = 0.1
         turn_epoch_1 = 320
@@ -134,7 +136,7 @@ class SimpleAgent(object):
                         turn_epoch_1 - turn_epoch_0) + turn_value_0
 
     def interact(self):
-        return self._take_n_steps(10)
+        return self._take_n_steps(1)
 
     def _take_one_step(self):
         return self._populate_exp()
@@ -171,7 +173,9 @@ class SimpleAgent(object):
         if isOver:
             self._env_state = self._env.reset()
             self._frame_done = True
-
+        print(
+            'simple offset:{} dis:{} action {} and r:{} GT is {}'.format(self._env.offset, self._env._calc_now_MI(), action,
+                                                                         reward, self._env.moving.inital))
         self._memory.append(Experience(curr_state, action, reward, isOver))
 
     def _action(self, state):
